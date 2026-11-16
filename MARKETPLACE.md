@@ -161,6 +161,77 @@ Both output examples are recorded synthetic-fixture outputs from the
 November 12, 2026 model validation. They show the response format and are not
 newly measured results from the streaming release.
 
+## Usage instructions
+
+1. Subscribe to SMB v2.0 and use the model-package ARN for your deployment
+   region. Create the SageMaker model with network isolation enabled. Use a
+   SageMaker execution role that can read your input S3 location and write
+   to your output location. Keep the package, compute, and S3 bucket in the
+   same AWS region. Start with the supplied synthetic examples and notebook
+   before submitting your own patient data.
+
+2. Prepare one uncompressed TAR per patient and task. Include request.json
+   at the archive root and all referenced files under input/. Send the TAR
+   bytes with Content-Type application/x-tar and Accept application/json.
+   The manifest alone is not a complete request. Do not include S3 URLs,
+   nested compressed archives, or filesystem links as patient inputs.
+
+3. Follow the request.json schema in the repository README. Every field is
+   required, and additional fields are rejected. Use a UUIDv4 request_uuid,
+   schema_version "1.0", task_version "1.0", and task_inputs {}. Select OS
+   with task_id "time_to_death" or TTNT with
+   "time_to_next_treatment_or_death". To obtain both predictions, submit
+   separate archives with distinct request UUIDs and the appropriate task IDs.
+
+4. Set observation_cutoff_day_offset to an integer on the same time axis as
+   the patient records. Supply only information available at that cutoff.
+   Include usable EHR Parquet tables with the documented filenames and
+   columns. For slides, match image filenames to wsi_list.parquet and provide
+   slide dates. For CT/DICOM studies, preserve the study/series layout and
+   matching dicom_inventory_file.parquet entries. Missing dates, missing
+   assets, and dates after the cutoff can cause images to be omitted. A
+   successful prediction does not confirm that every supplied image was used.
+
+5. Use real-time endpoints for small requests that fit the endpoint's payload
+   and processing-time limits. Use Batch Transform for large patient archives,
+   including whole-slide images and CT studies. For Batch Transform, upload
+   one TAR per S3 object to a dedicated input prefix containing only request
+   TARs. Do not upload standalone JSON manifests or Parquet files to that
+   prefix. Set BatchStrategy=SingleRecord, MaxPayloadInMB=0,
+   MaxConcurrentTransforms=1, SplitType=None, CompressionType=None,
+   ContentType=application/x-tar, Accept=application/json, and AssembleWith=None.
+   Each archive remains one complete inference request.
+
+6. Start with ml.g5.2xlarge if it is supported by your subscribed package.
+   Keep one active inference request per instance. Measure processing time
+   and resource use on representative inputs before running a large cohort.
+   For long Batch Transform requests, configure
+   ModelClientConfig.InvocationsTimeoutInSeconds up to 3600 as needed.
+   Provide enough scratch space for extracted assets and preprocessing.
+
+7. Keep each TAR, including its headers, within 64 GiB and its extracted
+   contents within 64 GiB. Keep request.json within 1 MiB and the archive
+   within 2,048 members, counting the manifest and any directory entries.
+   These are input limits, not guarantees of memory fit or completion time.
+   Avoid duplicate files and unnecessary assets. Do not split one patient's
+   archive into separate invocations and assume their predictions will be
+   combined; each invocation is evaluated independently.
+
+8. If an error reports model_not_ready or model_busy, wait and retry with
+   bounded backoff. Correct invalid_archive, invalid_patient_input,
+   unsupported_content_type, or payload_too_large errors before retrying.
+   For a failed Batch Transform job, inspect the failure reason and CloudWatch
+   logs. Use request_uuid and task_id to match each successful response to its
+   input. Batch outputs are JSON objects in corresponding .out files.
+
+9. Interpret prediction as a positive risk-ranking score. Within the same
+   task and model version, smaller values indicate higher model risk. Do not
+   interpret the value as an estimated number of days or a survival
+   probability, or compare OS and TTNT values as one shared time scale.
+
+10. Delete real-time endpoints when they are no longer needed. Follow the
+    notebook's cleanup steps to remove demo resources and synthetic S3 data.
+
 ## Git repository
 
 ```text
