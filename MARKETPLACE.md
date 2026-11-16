@@ -8,7 +8,7 @@ sample text below as a readable description.
 
 ## Model input summary
 
-The model accepts one patient and one prediction task per invocation. The input
+SMB v2.0 accepts one patient and one prediction task per invocation. The input
 is an uncompressed TAR archive sent with Content-Type application/x-tar. Each
 archive contains request.json at its root and the referenced patient files
 under input/.
@@ -104,7 +104,7 @@ Either task can be used with either inference mode.
 
 ## Model output summary
 
-The model returns one JSON object per patient/task request with Content-Type
+SMB v2.0 returns one JSON object per patient/task request with Content-Type
 application/json. The response contains schema_version, the input request_uuid,
 task_id, task_version, a finite positive numeric prediction, and score_type
 "rank_preserving_pseudo_days". Real-time inference returns this object in the

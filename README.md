@@ -1,6 +1,6 @@
-# SMB OS and TTNT on Amazon SageMaker
+# SMB v2.0 on Amazon SageMaker
 
-This repository documents the inputs and outputs of the SMB OS/TTNT
+This repository documents the inputs and outputs of the SMB v2.0
 Marketplace model. OS refers to overall survival; TTNT refers to time to next
 treatment or death. The repository contains documentation, synthetic examples,
 and a notebook for using a subscribed model package. It contains no patient data.
