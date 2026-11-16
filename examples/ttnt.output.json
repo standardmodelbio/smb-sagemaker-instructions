@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "request_uuid": "eb1e910d-2744-4c2d-98b0-eae991759ea3",
+  "task_id": "time_to_next_treatment_or_death",
+  "task_version": "1.0",
+  "prediction": 328.6650240123797,
+  "score_type": "rank_preserving_pseudo_days"
+}

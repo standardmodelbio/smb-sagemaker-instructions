@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "request_uuid": "eb1e910d-2744-4c2d-98b0-eae991759ea3",
+  "task_id": "time_to_next_treatment_or_death",
+  "task_version": "1.0",
+  "task_inputs": {},
+  "observation_cutoff_day_offset": 100,
+  "data_objects": [
+    {
+      "modality": "ehr",
+      "artifact_kind": "archive",
+      "local_path": "/input/ehr"
+    }
+  ]
+}
