@@ -117,13 +117,6 @@ the results, and removes its temporary model and current S3 objects. Your
 downloaded data and results stay on disk. The recovery cell does nothing
 during a normal run. Rerunning the whole notebook creates another job.
 
-On November 19, 2026, we tested this notebook through JupyterLab's **Run All
-Cells** in a new Python 3.12 environment with an empty download cache. All 13
-code cells completed, including all eight AWS results and cleanup. The
-[execution record](examples/public_multimodal/notebook-run/README.md) includes
-the saved notebook with outputs, package versions, and independent AWS checks.
-We used an account with the subscription, role, bucket, and quota already set up.
-
 The notebook needs internet access for the public downloads. You do not need
 a GDC or TCIA account for the selected files. Install the packages:
 
@@ -214,7 +207,7 @@ The repository includes the two public GDC responses recorded on November 19,
 2026, with their original URLs and SHA-256 hashes in the
 [metadata source record](examples/public_multimodal/metadata/sources.json).
 The helper verifies and uses these fixed metadata snapshots. It does not need
-the live GDC API, whose hostname failed to resolve during notebook testing.
+the live GDC API.
 Clinical tables and both sets of images are downloaded from TCIA and PathDB.
 The CT instances come from the public NBIA API linked by the
 [CPTAC-LUAD collection](https://www.cancerimagingarchive.net/collection/cptac-luad/).
@@ -609,7 +602,7 @@ responses passed the checks above. The measured OS scores were:
 | `C3L-00422` | 272.53007848 | 277.64935748 | 345.72121953 | 319.67090811 |
 
 The table is rounded to eight decimal places. The
-[recorded CSV](examples/public_multimodal/notebook-run/predictions.csv)
+[recorded CSV](examples/public_multimodal/reference-run/predictions.csv)
 contains the full values. For example, the actual response for C3L-00263 with
 clinical data, its slide, and CT was:
 
@@ -627,27 +620,16 @@ clinical data, its slide, and CT was:
 Your new requests will have different UUIDs. Check each response against your
 own request index. Compare numerical scores by patient, combination, and task.
 
-This run used the SMB v2.0 product's Marketplace release **v3**, with wrapper
-`0.1.4`. The package was
-`arn:aws:sagemaker:us-east-1:865070037744:model-package/smb-clintic-os-ttnt-bounded-ws-bbd72fca4ba53103993a883b96ba6bdd`.
-Its image digest was
-`sha256:5764e06af2cabf973208c067c88220b2825db17fef84f51d5af8df995e2c0303`.
-Use your subscription's package for your region. A different model release can
-produce different scores.
+The [expected-results record](examples/public_multimodal/reference-run/run.json)
+identifies the model package and image used for these scores. Use the package
+from your subscription. Scores can differ when the model or inputs differ.
 
-AWS reported 482.871 seconds from job creation to completion,
-or about 8.0 minutes. This includes provisioning and model startup.
-An earlier run took 526.541 seconds, or about 8.8 minutes. These are observed
-times, not a promised runtime or a throughput benchmark.
-The [notebook run record](examples/public_multimodal/notebook-run/run.json)
-contains the exact timestamps and configuration. The
-[notebook evidence directory](examples/public_multimodal/notebook-run/README.md)
-contains all eight responses as saved by the notebook and the submitted request
-index. Every score matched the
-[earlier reference run](examples/public_multimodal/reference-run/README.md)
-exactly at the returned precision.
+The observed AWS job took 482.871 seconds, or about 8.0 minutes, including
+provisioning and model startup. Allow for variation in startup and processing
+time. The [expected-results directory](examples/public_multimodal/reference-run/README.md)
+contains all eight responses and their request settings.
 
-The following cell compares your OS scores with the earlier reference run.
+The following cell compares your OS scores with the expected results.
 It applies only to the same model image, patient file contents, and request
 settings. Patient file fingerprints exclude generated request UUIDs and TAR
 timestamps, so a fresh download can be compared with the recorded run.
@@ -693,9 +675,7 @@ else:
 ```
 
 These scores verify the example's inference workflow. They do not establish
-clinical accuracy or predict a number of survival days. The two runs establish
-agreement for these inputs and this package on the tested instance type.
-They do not establish agreement across other releases or hardware.
+clinical accuracy or predict a number of survival days.
 
 ## 9. Interpret the comparison and retain the evidence
 
@@ -706,10 +686,8 @@ Two patients are enough to learn the batch interface, but not enough to measure
 whether a modality improves predictions.
 
 The preparation helper verifies that the intended image files are present and
-correctly linked. During authoring, all eight requests also passed the
-product's pinned preprocessing code, with only their intended modalities
-retained. The November 19 hosted run returned all eight predictions shown above.
-See the [verification record](examples/public_multimodal/VERIFICATION.md).
+correctly linked. See the [patient and date checks](examples/public_multimodal/VERIFICATION.md)
+for the source relationships and expected image inputs.
 
 The service response contains no per-image usage report. A valid response, or
 a changed score between combinations, does not by itself prove that every
@@ -868,10 +846,9 @@ helper command in step 3. It will create the same eight combinations with
 the rest of the guide. Both tasks use `task_version="1.0"` and `task_inputs={}`.
 Do not compare OS and TTNT scores as if they share a time scale.
 
-Use the subscribed release that supports streaming Batch Transform. These
-slides exceed older releases' small request limits. Keep `SplitType="None"`,
+Use streaming Batch Transform for these slides. Keep `SplitType="None"`,
 `MaxPayloadInMB=0`, and `MaxConcurrentTransforms=1`. Check the
-[release limits](README.md#batch-transform) before using larger inputs.
+[input limits](README.md#batch-transform) before using larger inputs.
 Prepare and upload archives as files rather than loading multi-gigabyte TARs
 into memory.
 
@@ -891,7 +868,7 @@ into memory.
 | A model or job name already exists | Inspect that job before submitting again. Use a new job name for a deliberate retry after a terminal failure. |
 | `invalid_archive` or `unsupported_content_type` | Use an uncompressed TAR with `request.json` at its root and `application/x-tar`. Do not upload the downloaded CT ZIP as the inference request. |
 | `invalid_patient_input` | Check table names and columns, manifest paths, and cutoff. An image directory alone is not a complete request. |
-| `payload_too_large` on these images | Check the subscribed product version. The old small-input release cannot process these archives. |
+| `payload_too_large` on these images | Check the archive size and member count against the input limits. Use the documented streaming Batch Transform settings. |
 | The notebook disconnects or waiting times out | The AWS job may still be running. Restore `run.json` using step 10, then inspect the job, retrieve completed outputs, or stop it. |
 | A job fails or outputs are missing | Read `FailureReason` and CloudWatch logs. Do not treat partial outputs as a complete batch. |
 

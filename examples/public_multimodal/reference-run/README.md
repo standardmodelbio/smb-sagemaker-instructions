@@ -1,16 +1,35 @@
-# Recorded public multimodal inference
+# Expected public-data results
 
-These are the measured outputs from the completed November 19, 2026 AWS run
-of the [public walkthrough](../../../PUBLIC_DATA_WALKTHROUGH.md).
-The cohort contains two public CPTAC-LUAD patients, each submitted with four
-modality combinations. All requests use OS and observation cutoff zero.
+These are the eight actual AWS responses for the two CPTAC-LUAD patients in
+the [walkthrough](../../../PUBLIC_DATA_WALKTHROUGH.md). Each patient has four
+input combinations. Every request uses OS with observation cutoff zero.
 
-- [Run configuration and validation](run.json).
-- [Submitted requests and TAR checksums](request-index.json).
-- [Full precision prediction table](predictions.csv).
+- [Full precision scores and request UUIDs](predictions.csv).
+- [Request settings and input checksums](request-index.json).
+- [Model identity and execution settings](run.json).
+- [Patient matching and date alignment](../VERIFICATION.md).
 
-The response files below contain the original bytes retrieved from S3.
-Their SHA-256 hashes are in `run.json`.
+## Expected scores
+
+| Patient | `ehr` | `ehr-wsi` | `ehr-ct` | `ehr-wsi-ct` |
+|---|---:|---:|---:|---:|
+| `C3L-00263` | 291.09576153 | 271.37754702 | 296.24379776 | 260.38882875 |
+| `C3L-00422` | 272.53007848 | 277.64935748 | 345.72121953 | 319.67090811 |
+
+The table is rounded. Use the CSV for full precision. Your requests will have
+new UUIDs. Compare each response with your own request, then compare scores
+by patient, input combination, and task. The walkthrough checks numerical
+agreement when the model image, patient files, and request settings match.
+
+Each `patient_input_sha256` hashes sorted lines of `path SHA256_OF_FILE`, with
+a newline after each line, for the patient files in the TAR. It excludes
+`request.json`; request settings are compared separately. This keeps generated
+UUIDs and TAR timestamps out of the patient-data comparison.
+
+## Response files
+
+These files contain the response values returned by AWS, saved as indented
+JSON. Their checksums are in `run.json`.
 
 - [C3L-00263, ehr](responses/C3L-00263-ehr-os.tar.out).
 - [C3L-00263, ehr-wsi](responses/C3L-00263-ehr-wsi-os.tar.out).
@@ -21,23 +40,6 @@ Their SHA-256 hashes are in `run.json`.
 - [C3L-00422, ehr-ct](responses/C3L-00422-ehr-ct-os.tar.out).
 - [C3L-00422, ehr-wsi-ct](responses/C3L-00422-ehr-wsi-ct-os.tar.out).
 
-The request UUIDs identify this particular run. Newly prepared requests get
-new UUIDs, so compare scores by patient, combination, and task. Numerical
-comparison also requires the same model image and input preparation.
-The walkthrough includes code for that comparison.
-
-Patient images and TAR files are excluded from Git. Recreate them using the
-[cohort manifest](../cohort.json) and [preparation helper](../prepare_inputs.py).
-The [verification record](../VERIFICATION.md) explains patient matching and
-date alignment, including the distinction between specimen procurement and
-digital-slide availability.
-
-The temporary SageMaker model and this run's S3 objects were removed after
-verification. The cleanup result is recorded in `run.json`.
-
-Each request index entry also contains a `patient_input_sha256` fingerprint.
-These were derived from the preserved input TARs after checking their recorded
-archive hashes. The fingerprint hashes sorted lines of `path SHA256_OF_FILE`
-with a newline after each line, excluding `request.json`. The notebook checks
-request settings separately and ignores only the generated UUID. This permits
-comparison after a fresh download or a change to metadata retrieval code.
+The observed AWS job completed in 482.871 seconds on one `ml.g5.2xlarge` in
+`us-east-1`. All eight responses passed the notebook's identity and score
+checks. The temporary model and S3 objects were removed after completion.

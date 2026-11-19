@@ -1,16 +1,9 @@
 {
-  "verified_at_utc": "2026-11-19T16:44:48.675688+00:00",
+  "observed_on": "2026-11-19",
   "region": "us-east-1",
   "model_package_arn": "arn:aws:sagemaker:us-east-1:865070037744:model-package/smb-clintic-os-ttnt-bounded-ws-bbd72fca4ba53103993a883b96ba6bdd",
-  "marketplace_product_id": "prod-njbrxd5bn3ydw",
   "image_digest": "sha256:5764e06af2cabf973208c067c88220b2825db17fef84f51d5af8df995e2c0303",
-  "job_name": "smb-public-20261119-113451-7c9e9376",
   "job_status": "Completed",
-  "creation_time_utc": "2026-11-19T16:35:15.340000+00:00",
-  "transform_start_time_utc": "2026-11-19T16:37:34.352000+00:00",
-  "transform_end_time_utc": "2026-11-19T16:44:01.881000+00:00",
-  "creation_to_completion_seconds": 526.541,
-  "transform_start_to_end_seconds": 387.529,
   "transform_resources": {
     "InstanceType": "ml.g5.2xlarge",
     "InstanceCount": 1,
@@ -24,54 +17,35 @@
     "InvocationsTimeoutInSeconds": 3600,
     "InvocationsMaxRetries": 1
   },
-  "split_type": "None",
-  "compression_type": "None",
-  "content_type": "application/x-tar",
-  "accept": "application/json",
-  "assemble_with": "None",
+  "validated_responses": 8,
   "cohort_sha256": "bb4a38fb6b6c4d766f6748f803af3c68afbea75d38201b06fc0212862bcde6ef",
-  "preparation_script_sha256": "b267c41ccfb7b41897f1aa00037d2ecf880c1635371d25193623aceb600177ec",
+  "total_input_tar_bytes": 648847360,
+  "output_sha256": {
+    "C3L-00263-ehr-ct-os.tar.out": "23840fb256acc2a1dc785681289a55df3e36ee37dd5f79a0be4cd8ce0aec1933",
+    "C3L-00263-ehr-os.tar.out": "0148b79a69e7d8dd81e09bdbda8ae2fe6ca21b4bd2ea151d9c9f64a2457a45fe",
+    "C3L-00263-ehr-wsi-ct-os.tar.out": "f10f33259c3f20b353adcaf95c22aa0c860bcfef28b3fafa283f078280ce603a",
+    "C3L-00263-ehr-wsi-os.tar.out": "4ccba7b5ced972179d9fdb4803dadde1b4ef69134b12ed5de6e40152fea9b1b9",
+    "C3L-00422-ehr-ct-os.tar.out": "1556b9483d51713a9aa6b74f0981eebc7bdf2e64f650734707ea4770a95e09a5",
+    "C3L-00422-ehr-os.tar.out": "4f8177907c97e2741bdd225a7ed22ce3a2fdfade38172d629def8b1634976c39",
+    "C3L-00422-ehr-wsi-ct-os.tar.out": "88146ad7db92833249980c9aedccede98b7dd0ab9f6f43ddce340d8e4451e24b",
+    "C3L-00422-ehr-wsi-os.tar.out": "8055f02da4ed26dfd0b6ba4ef1348cac20fa0d35d8a7cc355b1c029acb4250ba"
+  },
+  "creation_to_completion_seconds": 482.871,
   "dependencies": {
-    "boto3": "1.43.64",
-    "botocore": "1.43.64",
+    "jupyterlab": "4.6.6",
+    "ipykernel": "7.4.0",
+    "boto3": "1.44.6",
+    "botocore": "1.44.6",
+    "numpy": "2.5.5",
     "polars": "1.41.2",
     "pydicom": "3.0.2",
-    "openslide-python": "1.4.6",
-    "openslide-bin": "4.0.1.1"
+    "openslide-python": "1.4.7",
+    "openslide-bin": "4.0.1.2"
   },
-  "expected_responses": 8,
-  "validated_responses": 8,
-  "output_sha256": {
-    "C3L-00263-ehr-os.tar.out": "3f43e38f7b5a05024efd11a342547a55f9a3712cb98036480b0120ff8ca01d29",
-    "C3L-00263-ehr-wsi-os.tar.out": "11e421b5ae6c979ab2b5e51154e368a7794f967c047427c4c51dedb084208cc3",
-    "C3L-00263-ehr-ct-os.tar.out": "dccdc1ed49f68bd65d2fd12c4f28878d447668a2c22846fb86ced36626744c9f",
-    "C3L-00263-ehr-wsi-ct-os.tar.out": "d10ba363d9158df020df9ada176d55e1f0a2760d7cdef19cb33e5c3e613449bd",
-    "C3L-00422-ehr-os.tar.out": "a9a465bcac2c3d43afa34536a6f759d9af943bb4d867c66d3bd4218f7c1e5149",
-    "C3L-00422-ehr-wsi-os.tar.out": "a23c486e45c8c30862b431fecad0a3c81323315222cdaa814aa173e74fd64225",
-    "C3L-00422-ehr-ct-os.tar.out": "a6202e3fea576c10a19f2435491270e18c3c6117a618167c24d9462be645a13d",
-    "C3L-00422-ehr-wsi-ct-os.tar.out": "6572dc403ff25d66c9672a8ca3f4d8cb0eaaed2cf429103689f9905bddc684c8"
-  },
-  "total_input_tar_bytes": 648847360,
-  "checks": {
-    "completed_aws_job": true,
-    "network_isolated_subscribed_package": true,
-    "exact_output_key_set": true,
-    "input_tar_checksums": true,
-    "patient_and_ablation_coverage": true,
-    "response_identities": true,
-    "finite_positive_scores": true,
-    "score_type": true
-  },
-  "marketplace_version_title": "v3",
-  "wrapper_version": "0.1.4",
+  "output_serialization": "JSON parsed from S3 and saved with indentation.",
   "cleanup": {
-    "verified_at_utc": "2026-11-19T16:45:53.202845+00:00",
-    "job_status": "Completed",
     "temporary_model_absent": true,
     "current_s3_objects_remaining": 0,
-    "bucket_versioning": "Disabled",
-    "s3_versions_or_delete_markers_remaining": 0,
-    "local_inputs_and_results_retained": true,
-    "job_history_and_logs_retained": true
+    "s3_versions_or_delete_markers_remaining": 0
   }
 }

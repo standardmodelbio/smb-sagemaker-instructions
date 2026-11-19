@@ -10,19 +10,20 @@ contains no private patient data.
 The walkthrough includes eight recorded AWS inference responses and code to
 compare your results with that run.
 
-These instructions cover the product release with streaming Batch Transform
-input. Use the corresponding Marketplace version. Older versions can have
-smaller input limits.
+Start with the [public multimodal notebook](public_multimodal_walkthrough.ipynb).
+It prepares clinical data and images for two public patients, submits eight
+requests in one batch, verifies the responses, and cleans up the AWS resources.
+The [walkthrough](PUBLIC_DATA_WALKTHROUGH.md) includes setup instructions and
+explains how to prepare your own patient data.
 
-- [Request format and options](#requestjson-schema)
-- [Multimodal batch inference with two public patients](PUBLIC_DATA_WALKTHROUGH.md)
 - [Run the public multimodal notebook](public_multimodal_walkthrough.ipynb)
+- [Read the step-by-step walkthrough](PUBLIC_DATA_WALKTHROUGH.md)
+- [Request format and options](#requestjson-schema)
 - [Patient data formats](#patient-data-formats)
 - [Real-time inference](#real-time-inference)
 - [Batch Transform](#batch-transform)
 - [Output format](#output-format)
-- [Notebook](sagemaker_quickstart.ipynb)
-- [Marketplace form text](MARKETPLACE.md)
+- [Optional synthetic endpoint example](sagemaker_quickstart.ipynb)
 
 ## What to send
 
@@ -218,7 +219,9 @@ array, with the corresponding files and metadata included in the TAR:
 ]
 ```
 
-The bundled working examples use EHR only. They do not contain WSI or CT data.
+The bundled synthetic TAR files use EHR only. Use the
+[public multimodal notebook](public_multimodal_walkthrough.ipynb) to download
+and prepare the matched slide and CT inputs.
 
 ## Package your own request
 
@@ -253,7 +256,7 @@ The resulting member names must start with `input/`, or be exactly
 ## Real-time inference
 
 Create an endpoint from your subscribed model package with network isolation.
-The [notebook](sagemaker_quickstart.ipynb) demonstrates model and endpoint
+The [synthetic endpoint example](sagemaker_quickstart.ipynb) demonstrates model and endpoint
 creation, requests for both tasks, and cleanup. Then invoke the endpoint with
 the TAR bytes. This command uses your default AWS credentials:
 
@@ -279,8 +282,9 @@ can be used in the same job, because each manifest selects its own task.
 
 Create the model from the subscribed package with `EnableNetworkIsolation=True`.
 Use an execution role that can read your input prefix and write your output
-prefix. The [notebook](sagemaker_quickstart.ipynb) includes a complete small
-synthetic example. Configure the transform job as follows:
+prefix. The [public multimodal notebook](public_multimodal_walkthrough.ipynb)
+demonstrates a complete batch job with matched clinical data and images.
+Configure the transform job as follows:
 
 | Setting | Value |
 |---|---|
@@ -347,10 +351,10 @@ OS example:
 ```
 
 See [OS output](examples/os.output.json) and
-[TTNT output](examples/ttnt.output.json). These are recorded outputs from the
-November 12, 2026 validation of the same synthetic fixture. They demonstrate
-the response contract; they are not results of a new deployment from this
-repository.
+[TTNT output](examples/ttnt.output.json) for synthetic response examples.
+For the public dataset, use the
+[expected results](examples/public_multimodal/reference-run/README.md) and the
+comparison cell in the walkthrough.
 
 ## Errors
 
@@ -370,11 +374,12 @@ through its endpoint error response or Batch Transform failure details.
 
 ## Notebook setup
 
-Open [sagemaker_quickstart.ipynb](sagemaker_quickstart.ipynb). It uses only
-`boto3`, `polars`, and the Python standard library and constructs synthetic
-patient data in memory. Set the subscribed model-package ARN, your SageMaker
-execution role, your S3 bucket, and the AWS region. Follow the cleanup cell
-to remove the endpoint and demo resources.
+Follow [the setup instructions](PUBLIC_DATA_WALKTHROUGH.md#2-set-up-the-notebook)
+and open [public_multimodal_walkthrough.ipynb](public_multimodal_walkthrough.ipynb).
+Fill in your AWS settings and run the cells in order.
 
-The notebook exercises small EHR requests. Use the settings above for your
-existing large imaging archives and validate those cases separately.
+For a small endpoint example, use
+[sagemaker_quickstart.ipynb](sagemaker_quickstart.ipynb). It constructs synthetic
+EHR data in memory and demonstrates both endpoint inference and Batch
+Transform. This alternative creates an endpoint as well as a batch job.
+Run its cleanup cell to remove both sets of resources when finished.

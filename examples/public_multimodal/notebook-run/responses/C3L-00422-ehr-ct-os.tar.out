@@ -1,8 +1,0 @@
-{
-  "schema_version": "1.0",
-  "request_uuid": "07ce70f7-1515-4240-a675-b8f4e40fe6e4",
-  "task_id": "time_to_death",
-  "task_version": "1.0",
-  "prediction": 345.72121953456667,
-  "score_type": "rank_preserving_pseudo_days"
-}

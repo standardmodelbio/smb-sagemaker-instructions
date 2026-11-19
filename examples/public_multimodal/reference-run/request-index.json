@@ -5,11 +5,12 @@
     "task_label": "os",
     "filename": "C3L-00263-ehr-os.tar",
     "bytes": 10240,
-    "sha256": "cef3e1274a2cd50e008fd9419ce0c7443f470d086f152eb993b86a0b2cdc6255",
+    "sha256": "9f8a41c269cef872ddadc4ab6a87eaab6b4dc6964214061242f820a578ea4d1b",
+    "patient_input_sha256": "d3b017b4333dfc8a36d9698014fbb7699535798a8d1c2e654e1355185f238b80",
     "archive_members": 3,
     "request": {
       "schema_version": "1.0",
-      "request_uuid": "9e04a8c2-94e4-4167-b9ab-223d1b296f4a",
+      "request_uuid": "e838f9bc-1baa-4670-a9b4-89ed7d4d2376",
       "task_id": "time_to_death",
       "task_version": "1.0",
       "task_inputs": {},
@@ -21,8 +22,7 @@
           "local_path": "/input/ehr"
         }
       ]
-    },
-    "patient_input_sha256": "d3b017b4333dfc8a36d9698014fbb7699535798a8d1c2e654e1355185f238b80"
+    }
   },
   {
     "patient_id": "C3L-00263",
@@ -30,11 +30,12 @@
     "task_label": "os",
     "filename": "C3L-00263-ehr-wsi-os.tar",
     "bytes": 180951040,
-    "sha256": "8e0c5d9d0861b7c7463551b61156b3fad73d4d90e6c7f35a1050ef997dd163c5",
+    "sha256": "cb1ad93ce928ffd9eeaa57e78ff30826826515f12d8df6ac705d95bbe51f4fff",
+    "patient_input_sha256": "3724721386d6d96cbd52d4b95a96a6c29db720200ee7205a10917e4c4feebcaa",
     "archive_members": 5,
     "request": {
       "schema_version": "1.0",
-      "request_uuid": "51a145e0-fad1-4144-829f-1d1cbd87bd95",
+      "request_uuid": "097966b4-6443-464b-b37f-05ac0648153a",
       "task_id": "time_to_death",
       "task_version": "1.0",
       "task_inputs": {},
@@ -51,8 +52,7 @@
           "local_path": "/input/pathology"
         }
       ]
-    },
-    "patient_input_sha256": "3724721386d6d96cbd52d4b95a96a6c29db720200ee7205a10917e4c4feebcaa"
+    }
   },
   {
     "patient_id": "C3L-00263",
@@ -60,11 +60,12 @@
     "task_label": "os",
     "filename": "C3L-00263-ehr-ct-os.tar",
     "bytes": 37713920,
-    "sha256": "f3dca668c80364ce1e7b23f8ed8b0bd0c66b3a6ee8dbae419ed3999152c24c88",
+    "sha256": "1f2a9e7d137f1d221421b5891353b7c022e172b67d924303df7c6b74826f240b",
+    "patient_input_sha256": "bd2276b28c2d3bb619b627a7bf6378161e7dee60f50f0b48ca0a97eb9a36602e",
     "archive_members": 75,
     "request": {
       "schema_version": "1.0",
-      "request_uuid": "79b1c081-f864-470d-861f-c3714b733f11",
+      "request_uuid": "080cb72d-5f78-4d72-b7ac-77c146d21103",
       "task_id": "time_to_death",
       "task_version": "1.0",
       "task_inputs": {},
@@ -81,8 +82,7 @@
           "local_path": "/input/radiology"
         }
       ]
-    },
-    "patient_input_sha256": "bd2276b28c2d3bb619b627a7bf6378161e7dee60f50f0b48ca0a97eb9a36602e"
+    }
   },
   {
     "patient_id": "C3L-00263",
@@ -90,11 +90,12 @@
     "task_label": "os",
     "filename": "C3L-00263-ehr-wsi-ct-os.tar",
     "bytes": 218654720,
-    "sha256": "7f5566d7cf8b9eb402c7cd97cb14ce4496cb976b93821435166419eb3a3d1224",
+    "sha256": "c6614f2ae158d63827de27640ec247501ec468e2bc7f45f1d2b4166cd8bf609b",
+    "patient_input_sha256": "a8476f799ef0dd08554ef861c0cf43d6f5b49343061c34a0241727e2a186c464",
     "archive_members": 77,
     "request": {
       "schema_version": "1.0",
-      "request_uuid": "58fae540-35af-452b-8984-c79311be910f",
+      "request_uuid": "7d04b3eb-a8b8-4e0f-817b-2ae5f8ba5ff5",
       "task_id": "time_to_death",
       "task_version": "1.0",
       "task_inputs": {},
@@ -116,8 +117,7 @@
           "local_path": "/input/radiology"
         }
       ]
-    },
-    "patient_input_sha256": "a8476f799ef0dd08554ef861c0cf43d6f5b49343061c34a0241727e2a186c464"
+    }
   },
   {
     "patient_id": "C3L-00422",
@@ -125,11 +125,12 @@
     "task_label": "os",
     "filename": "C3L-00422-ehr-os.tar",
     "bytes": 10240,
-    "sha256": "5d2c936328992809ee50a26638878c8f37445e9aa663796a6b8570b24b067fe4",
+    "sha256": "fe62de2578dc6f2b2c46c3f5d90026705ebcda5f37a44420cf7f0b16da135eff",
+    "patient_input_sha256": "2b1025eb9ef82966bc359852f98c1f701f70e3c749cff9658de0012c08e17510",
     "archive_members": 3,
     "request": {
       "schema_version": "1.0",
-      "request_uuid": "e9fd4ece-1206-45bf-8001-46c30c658246",
+      "request_uuid": "b090b5b0-6f58-4bd2-ad88-d58a1fdc6670",
       "task_id": "time_to_death",
       "task_version": "1.0",
       "task_inputs": {},
@@ -141,8 +142,7 @@
           "local_path": "/input/ehr"
         }
       ]
-    },
-    "patient_input_sha256": "2b1025eb9ef82966bc359852f98c1f701f70e3c749cff9658de0012c08e17510"
+    }
   },
   {
     "patient_id": "C3L-00422",
@@ -150,11 +150,12 @@
     "task_label": "os",
     "filename": "C3L-00422-ehr-wsi-os.tar",
     "bytes": 69109760,
-    "sha256": "8a5c60eecfde92d1383b74ae8139bed5c286a9f7a9237748514147efc1592f4f",
+    "sha256": "9f51e89136031d417dd4787261270b03e70e7552ea870c4309693ba3aa190f08",
+    "patient_input_sha256": "af702a94cf5244577c4e9de27647ac2b4089f7f8aebb6e71b48f09c4345820ff",
     "archive_members": 5,
     "request": {
       "schema_version": "1.0",
-      "request_uuid": "b42210f5-f903-4daa-bdc6-6807ad63c7e6",
+      "request_uuid": "2e56df97-063a-4873-8f88-65f8ecee7340",
       "task_id": "time_to_death",
       "task_version": "1.0",
       "task_inputs": {},
@@ -171,8 +172,7 @@
           "local_path": "/input/pathology"
         }
       ]
-    },
-    "patient_input_sha256": "af702a94cf5244577c4e9de27647ac2b4089f7f8aebb6e71b48f09c4345820ff"
+    }
   },
   {
     "patient_id": "C3L-00422",
@@ -180,11 +180,12 @@
     "task_label": "os",
     "filename": "C3L-00422-ehr-ct-os.tar",
     "bytes": 36648960,
-    "sha256": "62373d617b65f6296143c2f47575098d3dbbab82b40b914178a76aa1541f316e",
+    "sha256": "5f638b453c892fd1abd438427f8aadf108e78eed689b30aefcf01b005aad13d1",
+    "patient_input_sha256": "d9d3fb5b3270fd3db4280a6afcf17732728b8b91a18986f8b40a3e0061df1016",
     "archive_members": 73,
     "request": {
       "schema_version": "1.0",
-      "request_uuid": "b197aabe-5536-417a-8b0b-ac560de4fb97",
+      "request_uuid": "07ce70f7-1515-4240-a675-b8f4e40fe6e4",
       "task_id": "time_to_death",
       "task_version": "1.0",
       "task_inputs": {},
@@ -201,8 +202,7 @@
           "local_path": "/input/radiology"
         }
       ]
-    },
-    "patient_input_sha256": "d9d3fb5b3270fd3db4280a6afcf17732728b8b91a18986f8b40a3e0061df1016"
+    }
   },
   {
     "patient_id": "C3L-00422",
@@ -210,11 +210,12 @@
     "task_label": "os",
     "filename": "C3L-00422-ehr-wsi-ct-os.tar",
     "bytes": 105748480,
-    "sha256": "f385b01de6c632cde477b21cad231492e93a6df87447874d659b2389ddce49b0",
+    "sha256": "848492e0df3e58cae1206468070681588a4f22bbdaaacb98d130693fe30af1a9",
+    "patient_input_sha256": "28bbddd9429f09837c4753004f884a488b8457694603bd403eda5f31ea1e9a9a",
     "archive_members": 75,
     "request": {
       "schema_version": "1.0",
-      "request_uuid": "452e084f-9781-4492-af09-676afb04c553",
+      "request_uuid": "6a1a3c88-8164-474b-9eeb-a96737393980",
       "task_id": "time_to_death",
       "task_version": "1.0",
       "task_inputs": {},
@@ -236,7 +237,6 @@
           "local_path": "/input/radiology"
         }
       ]
-    },
-    "patient_input_sha256": "28bbddd9429f09837c4753004f884a488b8457694603bd403eda5f31ea1e9a9a"
+    }
   }
 ]
