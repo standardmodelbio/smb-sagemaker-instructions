@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "verified_on": "2026-11-17",
+  "collection": "CPTAC-LUAD",
+  "collection_url": "https://www.cancerimagingarchive.net/collection/cptac-luad/",
+  "pathdb_csv_url": "https://pathdb.cancerimagingarchive.net/system/files/collectionmetadata/202407/cptac_metadata_07-09-2024.csv",
+  "pathdb_csv_sha256": "a4f86effa438352acadbf7a1f61be16a2cb5538ae8d9dda8d35e0677ab064a27",
+  "slide_date_basis": "GDC sample procurement relative to Diagnosis; not slide digitization or report availability",
+  "patients": [
+    {
+      "patient_id": "C3L-00263",
+      "gdc_case_id": "3a7449d1-7761-4c8e-afc0-9968b1f33305",
+      "specimen_id": "C3L-00263-04",
+      "slide_id": "C3L-00263-24",
+      "pathdb_node_id": 215986,
+      "slide_day": 0,
+      "cutoff_day": 0,
+      "slide": {
+        "filename": "C3L-00263-24.svs",
+        "url": "https://pathdb.cancerimagingarchive.net/system/files/wsi/ross/CPTAC/LUAD/C3L-00263-24.svs",
+        "bytes": 180935391,
+        "sha256": "cfe3c85213bc255fa572d6f8a0608cdd7c2002cb6f42df28f6f7f28e60d22ca5",
+        "dimensions": [33863, 21032]
+      },
+      "ct": {
+        "study_uid": "1.3.6.1.4.1.14519.5.2.1.2857.5885.296476086183184738156878968461",
+        "series_uid": "1.3.6.1.4.1.14519.5.2.1.2857.5885.317622331314097439264057140318",
+        "series_description": "CHEST ST",
+        "day": -1,
+        "instances": 71,
+        "uncompressed_bytes": 37566524,
+        "instances_sha256": "59136bca5711e6e0ef9b5cb13716434ff379ce9f08189f953ab0df9158e148ac"
+      }
+    },
+    {
+      "patient_id": "C3L-00422",
+      "gdc_case_id": "67c1aa6e-0bc7-40e2-9742-8f73be3ed450",
+      "specimen_id": "C3L-00422-02",
+      "slide_id": "C3L-00422-22",
+      "pathdb_node_id": 216003,
+      "slide_day": 0,
+      "cutoff_day": 0,
+      "slide": {
+        "filename": "C3L-00422-22.svs",
+        "url": "https://pathdb.cancerimagingarchive.net/system/files/wsi/ross/CPTAC/LUAD/C3L-00422-22.svs",
+        "bytes": 69093469,
+        "sha256": "284b8f872c0a57bd407c849d66f61aabf2c8200bbb2cea0fffd5e61321bc43b1",
+        "dimensions": [21911, 15312]
+      },
+      "ct": {
+        "study_uid": "1.3.6.1.4.1.14519.5.2.1.2857.5885.944615019877305895755192476219",
+        "series_uid": "1.3.6.1.4.1.14519.5.2.1.2857.5885.221780782718211148545539944300",
+        "series_description": "CHEST ST SS50",
+        "day": -109,
+        "instances": 69,
+        "uncompressed_bytes": 36509694,
+        "instances_sha256": "3f56b75da4ff86ee8c875b68dc35be6112e01faf020b38e107c09a85318153da"
+      }
+    }
+  ]
+}
