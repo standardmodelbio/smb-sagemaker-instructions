@@ -34,3 +34,10 @@ digital-slide availability.
 
 The temporary SageMaker model and this run's S3 objects were removed after
 verification. The cleanup result is recorded in `run.json`.
+
+Each request index entry also contains a `patient_input_sha256` fingerprint.
+These were derived from the preserved input TARs after checking their recorded
+archive hashes. The fingerprint hashes sorted lines of `path SHA256_OF_FILE`
+with a newline after each line, excluding `request.json`. The notebook checks
+request settings separately and ignores only the generated UUID. This permits
+comparison after a fresh download or a change to metadata retrieval code.

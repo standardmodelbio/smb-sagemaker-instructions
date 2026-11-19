@@ -12,16 +12,16 @@ import zipfile
 from pathlib import Path
 
 import pydicom
-from pydicom.dataset import FileDataset, FileMetaDataset
-from pydicom.uid import CTImageStorage, ExplicitVRLittleEndian
-
 from prepare_inputs import (
     VARIANTS,
     match_sources,
     package_request,
+    patient_input_fingerprint,
     verify_ct,
     write_tables,
 )
+from pydicom.dataset import FileDataset, FileMetaDataset
+from pydicom.uid import CTImageStorage, ExplicitVRLittleEndian
 
 
 class PreparationTests(unittest.TestCase):
@@ -205,6 +205,28 @@ class PreparationTests(unittest.TestCase):
                     self.assertRaisesRegex(ValueError, message),
                 ):
                     verify_ct(archive, root / keyword, changed)
+
+    def test_patient_fingerprint_ignores_uuid_but_detects_changed_data(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "request.tar"
+
+            def fingerprint(request_uuid, contents):
+                with tarfile.open(path, "w") as archive:
+                    for name, raw in [
+                        (
+                            "request.json",
+                            json.dumps({"request_uuid": request_uuid}).encode(),
+                        ),
+                        ("input/ehr/example.parquet", contents),
+                    ]:
+                        member = tarfile.TarInfo(name)
+                        member.size = len(raw)
+                        archive.addfile(member, io.BytesIO(raw))
+                return patient_input_fingerprint(path)
+
+            first = fingerprint("first-uuid", b"patient-one")
+            self.assertEqual(first, fingerprint("new-uuid", b"patient-one"))
+            self.assertNotEqual(first, fingerprint("first-uuid", b"patient-two"))
 
 
 if __name__ == "__main__":

@@ -83,6 +83,20 @@ def load_gdc_case(patient: dict[str, Any], evidence_path: Path) -> dict[str, Any
     return json.loads(path.read_text())["data"]
 
 
+def patient_input_fingerprint(path: Path) -> str:
+    """Hash patient file names and contents, excluding request UUID and TAR headers."""
+    entries = []
+    with tarfile.open(path, "r:") as archive:
+        for member in sorted(archive.getmembers(), key=lambda member: member.name):
+            if member.name == "request.json":
+                continue
+            require(member.isfile(), "Expected only regular patient files")
+            with archive.extractfile(member) as stream:
+                sha256 = hashlib.file_digest(stream, "sha256").hexdigest()
+            entries.append(f"{member.name} {sha256}\n")
+    return hashlib.sha256("".join(entries).encode()).hexdigest()
+
+
 def match_sources(
     patient: dict[str, Any],
     row: dict[str, str],
@@ -357,6 +371,7 @@ def package_request(
         "filename": filename,
         "bytes": output.stat().st_size,
         "sha256": digest(output),
+        "patient_input_sha256": patient_input_fingerprint(output),
         "archive_members": len(paths) + 1,
         "request": request,
     }

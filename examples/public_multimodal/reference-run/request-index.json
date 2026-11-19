@@ -21,7 +21,8 @@
           "local_path": "/input/ehr"
         }
       ]
-    }
+    },
+    "patient_input_sha256": "d3b017b4333dfc8a36d9698014fbb7699535798a8d1c2e654e1355185f238b80"
   },
   {
     "patient_id": "C3L-00263",
@@ -50,7 +51,8 @@
           "local_path": "/input/pathology"
         }
       ]
-    }
+    },
+    "patient_input_sha256": "3724721386d6d96cbd52d4b95a96a6c29db720200ee7205a10917e4c4feebcaa"
   },
   {
     "patient_id": "C3L-00263",
@@ -79,7 +81,8 @@
           "local_path": "/input/radiology"
         }
       ]
-    }
+    },
+    "patient_input_sha256": "bd2276b28c2d3bb619b627a7bf6378161e7dee60f50f0b48ca0a97eb9a36602e"
   },
   {
     "patient_id": "C3L-00263",
@@ -113,7 +116,8 @@
           "local_path": "/input/radiology"
         }
       ]
-    }
+    },
+    "patient_input_sha256": "a8476f799ef0dd08554ef861c0cf43d6f5b49343061c34a0241727e2a186c464"
   },
   {
     "patient_id": "C3L-00422",
@@ -137,7 +141,8 @@
           "local_path": "/input/ehr"
         }
       ]
-    }
+    },
+    "patient_input_sha256": "2b1025eb9ef82966bc359852f98c1f701f70e3c749cff9658de0012c08e17510"
   },
   {
     "patient_id": "C3L-00422",
@@ -166,7 +171,8 @@
           "local_path": "/input/pathology"
         }
       ]
-    }
+    },
+    "patient_input_sha256": "af702a94cf5244577c4e9de27647ac2b4089f7f8aebb6e71b48f09c4345820ff"
   },
   {
     "patient_id": "C3L-00422",
@@ -195,7 +201,8 @@
           "local_path": "/input/radiology"
         }
       ]
-    }
+    },
+    "patient_input_sha256": "d9d3fb5b3270fd3db4280a6afcf17732728b8b91a18986f8b40a3e0061df1016"
   },
   {
     "patient_id": "C3L-00422",
@@ -229,6 +236,7 @@
           "local_path": "/input/radiology"
         }
       ]
-    }
+    },
+    "patient_input_sha256": "28bbddd9429f09837c4753004f884a488b8457694603bd403eda5f31ea1e9a9a"
   }
 ]
