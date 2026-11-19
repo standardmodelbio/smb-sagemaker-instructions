@@ -1,0 +1,332 @@
+{
+  "data": {
+    "lost_to_followup": null,
+    "slide_ids": [
+      "c26af679-976b-4333-8d94-c57f23c7d93f",
+      "191a6d9a-bce4-46a4-97f0-7054ffb6dc28",
+      "49776c25-6a36-4ae6-95ee-f1fa2cf79733"
+    ],
+    "submitter_slide_ids": [
+      "C3L-00422-25",
+      "C3L-00422-21",
+      "C3L-00422-22"
+    ],
+    "days_to_lost_to_followup": null,
+    "disease_type": "Adenomas and Adenocarcinomas",
+    "submitter_id": "C3L-00422",
+    "days_to_consent": 0,
+    "aliquot_ids": [
+      "37d21656-4deb-40ff-9aee-4f619a70bb4b",
+      "8e97f524-44aa-4722-b069-0cdd0c608c70",
+      "1468d8d0-c4b4-4c00-b057-97b8d19a4bd8",
+      "56141fbf-9f28-49f5-be3b-4b85cabcca1e",
+      "d2779a54-6282-4c22-a689-d752fbdc3b21"
+    ],
+    "submitter_aliquot_ids": [
+      "CPT0082850010",
+      "CPT0082890009",
+      "CPT0082890006",
+      "CPT0081740002",
+      "CPT0082850007"
+    ],
+    "created_datetime": "2017-09-04T10:20:52.321423-05:00",
+    "diagnosis_ids": [
+      "4e306ec0-4fb4-4d91-8573-12a0f7baedcb"
+    ],
+    "samples": [
+      {
+        "tumor_descriptor": "Primary",
+        "time_between_clamping_and_freezing": 67.0,
+        "sample_id": "02b6a42a-4bf5-4443-b2c0-b3a4afa66032",
+        "freezing_method": "LN2",
+        "submitter_id": "C3L-00422-02",
+        "diagnosis_pathologically_confirmed": "Yes",
+        "sample_type": "Primary Tumor",
+        "sample_ordinal": 2,
+        "created_datetime": "2017-09-04T10:34:12.411465-05:00",
+        "time_between_excision_and_freezing": 22.0,
+        "biospecimen_anatomic_site": "Lung",
+        "specimen_type": "Solid Tissue",
+        "updated_datetime": "2023-10-24T13:12:37.695020-05:00",
+        "biospecimen_laterality": "Left",
+        "days_to_sample_procurement": 0,
+        "method_of_sample_procurement": "Tumor Resection",
+        "state": "released",
+        "current_weight": 0.12,
+        "initial_weight": 120.0,
+        "tissue_type": "Tumor",
+        "preservation_method": "Snap Frozen",
+        "portions": [
+          {
+            "portion_id": "fcfd83ac-73ea-59b7-8ddc-4989ef81e0d2",
+            "slides": [
+              {
+                "updated_datetime": "2023-07-28T13:37:40.526681-05:00",
+                "percent_necrosis": 10.0,
+                "submitter_id": "C3L-00422-22",
+                "section_location": "Left Lower Lobe",
+                "state": "released",
+                "slide_id": "191a6d9a-bce4-46a4-97f0-7054ffb6dc28",
+                "created_datetime": "2023-02-06T10:53:06.193982-06:00",
+                "percent_tumor_nuclei": 60.0
+              }
+            ]
+          },
+          {
+            "portion_id": "a007537d-076e-5924-8cd5-3388c6b76c60"
+          },
+          {
+            "portion_id": "3eb8444b-5175-5c90-be51-60d55f82d0c0"
+          }
+        ]
+      },
+      {
+        "tumor_descriptor": "Not Applicable",
+        "sample_id": "053abbdb-5420-4c8b-87e9-7fb2fd4dd2cc",
+        "freezing_method": "-20",
+        "submitter_id": "C3L-00422-31",
+        "sample_type": "Blood Derived Normal",
+        "sample_ordinal": 1,
+        "created_datetime": "2017-09-04T12:30:01.013967-05:00",
+        "biospecimen_anatomic_site": "Blood",
+        "specimen_type": "Peripheral Blood Components NOS",
+        "updated_datetime": "2023-10-24T13:12:37.695020-05:00",
+        "biospecimen_laterality": "Left",
+        "days_to_sample_procurement": 0,
+        "method_of_sample_procurement": "Blood Draw",
+        "state": "released",
+        "tissue_type": "Normal",
+        "preservation_method": "Frozen",
+        "portions": [
+          {
+            "portion_id": "26453da9-42f8-5f44-917e-5c65f3b0ce20"
+          }
+        ]
+      },
+      {
+        "distributor_reference": null,
+        "tumor_descriptor": "Not Applicable",
+        "sample_id": "30e023b7-2728-46fa-a144-c6d4d0557e18",
+        "diagnosis_pathologically_confirmed": null,
+        "sample_type": "Solid Tissue Normal",
+        "created_datetime": "2018-01-03T09:54:28.888915-06:00",
+        "distance_normal_to_tumor": null,
+        "time_between_excision_and_freezing": null,
+        "growth_rate": null,
+        "updated_datetime": "2023-10-23T16:48:35.692451-05:00",
+        "days_to_collection": null,
+        "method_of_sample_procurement": null,
+        "state": "released",
+        "initial_weight": 120.0,
+        "preservation_method": "OCT",
+        "intermediate_dimension": null,
+        "passage_count": null,
+        "time_between_clamping_and_freezing": null,
+        "freezing_method": "LN2",
+        "pathology_report_uuid": null,
+        "submitter_id": "C3L-00422-06",
+        "shortest_dimension": null,
+        "biospecimen_anatomic_site": null,
+        "specimen_type": "Solid Tissue",
+        "biospecimen_laterality": null,
+        "days_to_sample_procurement": null,
+        "longest_dimension": null,
+        "current_weight": null,
+        "catalog_reference": null,
+        "tissue_type": "Normal"
+      },
+      {
+        "tumor_descriptor": "Primary",
+        "time_between_clamping_and_freezing": 67.0,
+        "sample_id": "91fda349-383d-4889-bf2b-16e5a9d3bc89",
+        "freezing_method": "LN2",
+        "submitter_id": "C3L-00422-01",
+        "diagnosis_pathologically_confirmed": "Yes",
+        "sample_type": "Primary Tumor",
+        "sample_ordinal": 1,
+        "created_datetime": "2017-09-04T10:34:12.411465-05:00",
+        "time_between_excision_and_freezing": 22.0,
+        "biospecimen_anatomic_site": "Lung",
+        "specimen_type": "Solid Tissue",
+        "updated_datetime": "2023-10-24T13:12:37.695020-05:00",
+        "biospecimen_laterality": "Left",
+        "days_to_sample_procurement": 0,
+        "method_of_sample_procurement": "Tumor Resection",
+        "state": "released",
+        "current_weight": 0.11,
+        "initial_weight": 110.0,
+        "tissue_type": "Tumor",
+        "preservation_method": "Snap Frozen",
+        "portions": [
+          {
+            "portion_id": "0c443c47-388b-5095-8bb9-e30ca55301b3",
+            "slides": [
+              {
+                "updated_datetime": "2023-07-28T13:37:40.526681-05:00",
+                "percent_necrosis": 5.0,
+                "submitter_id": "C3L-00422-21",
+                "section_location": "Left Lower Lobe",
+                "state": "released",
+                "slide_id": "c26af679-976b-4333-8d94-c57f23c7d93f",
+                "created_datetime": "2023-02-06T10:53:06.193982-06:00",
+                "percent_tumor_nuclei": 85.0
+              }
+            ]
+          },
+          {
+            "portion_id": "a007537d-076e-5924-8cd5-3388c6b76c60"
+          },
+          {
+            "portion_id": "3eb8444b-5175-5c90-be51-60d55f82d0c0"
+          }
+        ]
+      },
+      {
+        "distributor_reference": null,
+        "tumor_descriptor": "Not Applicable",
+        "sample_id": "979c2e33-e4e2-4f60-ba98-460082a7f9f1",
+        "diagnosis_pathologically_confirmed": null,
+        "sample_type": "Solid Tissue Normal",
+        "created_datetime": "2018-01-03T09:54:28.888915-06:00",
+        "distance_normal_to_tumor": null,
+        "time_between_excision_and_freezing": null,
+        "growth_rate": null,
+        "updated_datetime": "2023-10-23T16:48:35.692451-05:00",
+        "days_to_collection": null,
+        "method_of_sample_procurement": null,
+        "state": "released",
+        "initial_weight": 130.0,
+        "preservation_method": "OCT",
+        "intermediate_dimension": null,
+        "passage_count": null,
+        "time_between_clamping_and_freezing": null,
+        "freezing_method": "LN2",
+        "pathology_report_uuid": null,
+        "submitter_id": "C3L-00422-04",
+        "shortest_dimension": null,
+        "biospecimen_anatomic_site": null,
+        "specimen_type": "Solid Tissue",
+        "biospecimen_laterality": null,
+        "days_to_sample_procurement": null,
+        "longest_dimension": null,
+        "current_weight": null,
+        "catalog_reference": null,
+        "tissue_type": "Normal"
+      },
+      {
+        "distributor_reference": null,
+        "tumor_descriptor": "Primary",
+        "sample_id": "bdef9ba8-2824-4c14-8f60-d98dbfd02045",
+        "diagnosis_pathologically_confirmed": null,
+        "sample_type": "Primary Tumor",
+        "created_datetime": "2017-09-04T10:34:12.411465-05:00",
+        "distance_normal_to_tumor": null,
+        "time_between_excision_and_freezing": null,
+        "growth_rate": null,
+        "updated_datetime": "2023-10-23T16:48:35.692451-05:00",
+        "days_to_collection": null,
+        "method_of_sample_procurement": null,
+        "state": "released",
+        "initial_weight": 120.0,
+        "preservation_method": "OCT",
+        "intermediate_dimension": null,
+        "passage_count": null,
+        "time_between_clamping_and_freezing": null,
+        "freezing_method": "LN2",
+        "pathology_report_uuid": null,
+        "submitter_id": "C3L-00422-03",
+        "shortest_dimension": null,
+        "biospecimen_anatomic_site": null,
+        "specimen_type": "Solid Tissue",
+        "biospecimen_laterality": null,
+        "days_to_sample_procurement": null,
+        "longest_dimension": null,
+        "current_weight": 0.12,
+        "catalog_reference": null,
+        "tissue_type": "Tumor"
+      },
+      {
+        "distributor_reference": null,
+        "tumor_descriptor": "Not Applicable",
+        "sample_id": "ef71b2c0-b758-4984-b191-7f7913a9bf98",
+        "diagnosis_pathologically_confirmed": "Yes",
+        "sample_type": "Solid Tissue Normal",
+        "sample_ordinal": 2,
+        "created_datetime": "2018-01-03T09:54:28.888915-06:00",
+        "distance_normal_to_tumor": null,
+        "time_between_excision_and_freezing": 28.0,
+        "growth_rate": null,
+        "updated_datetime": "2023-10-24T13:12:37.695020-05:00",
+        "days_to_collection": null,
+        "method_of_sample_procurement": "Surgical Resection",
+        "state": "released",
+        "initial_weight": 130.0,
+        "preservation_method": "Snap Frozen",
+        "portions": [
+          {
+            "portion_id": "00553c08-1386-5c53-9f7b-188b1317ae10",
+            "slides": [
+              {
+                "updated_datetime": "2023-07-28T13:37:40.526681-05:00",
+                "submitter_id": "C3L-00422-25",
+                "section_location": "Left Lower Lobe",
+                "state": "released",
+                "slide_id": "49776c25-6a36-4ae6-95ee-f1fa2cf79733",
+                "created_datetime": "2023-02-06T10:53:06.193982-06:00"
+              }
+            ]
+          },
+          {
+            "portion_id": "6880c6a4-ccac-5ed4-a8ce-17d9673ebdd9"
+          },
+          {
+            "portion_id": "e29f737b-65f3-594a-b8be-74f2fc0ed5c2"
+          }
+        ],
+        "intermediate_dimension": null,
+        "passage_count": null,
+        "time_between_clamping_and_freezing": 73.0,
+        "freezing_method": "LN2",
+        "pathology_report_uuid": null,
+        "submitter_id": "C3L-00422-05",
+        "shortest_dimension": null,
+        "biospecimen_anatomic_site": "Lung",
+        "specimen_type": "Solid Tissue",
+        "biospecimen_laterality": "Left",
+        "days_to_sample_procurement": 0,
+        "longest_dimension": null,
+        "current_weight": null,
+        "catalog_reference": null,
+        "tissue_type": "Normal"
+      }
+    ],
+    "sample_ids": [
+      "30e023b7-2728-46fa-a144-c6d4d0557e18",
+      "979c2e33-e4e2-4f60-ba98-460082a7f9f1",
+      "ef71b2c0-b758-4984-b191-7f7913a9bf98",
+      "91fda349-383d-4889-bf2b-16e5a9d3bc89",
+      "bdef9ba8-2824-4c14-8f60-d98dbfd02045",
+      "02b6a42a-4bf5-4443-b2c0-b3a4afa66032",
+      "053abbdb-5420-4c8b-87e9-7fb2fd4dd2cc"
+    ],
+    "consent_type": "Informed Consent",
+    "submitter_sample_ids": [
+      "C3L-00422-04",
+      "C3L-00422-01",
+      "C3L-00422-06",
+      "C3L-00422-02",
+      "C3L-00422-03",
+      "C3L-00422-05",
+      "C3L-00422-31"
+    ],
+    "primary_site": "Bronchus and lung",
+    "submitter_diagnosis_ids": [
+      "C3L-00422-DIAG"
+    ],
+    "updated_datetime": "2024-06-20T16:01:05.476256-05:00",
+    "case_id": "67c1aa6e-0bc7-40e2-9742-8f73be3ed450",
+    "index_date": "Diagnosis",
+    "state": "released"
+  },
+  "warnings": {}
+}

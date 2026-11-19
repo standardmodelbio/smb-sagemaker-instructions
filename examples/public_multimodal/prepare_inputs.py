@@ -71,6 +71,18 @@ def fetch_json(url: str, evidence_path: Path) -> dict[str, Any]:
     return value
 
 
+def load_gdc_case(patient: dict[str, Any], evidence_path: Path) -> dict[str, Any]:
+    """Use the recorded public response so this fixed cohort survives API outages."""
+    metadata = Path(__file__).with_name("metadata")
+    sources = json.loads((metadata / "sources.json").read_text())
+    source = sources[patient["patient_id"]]
+    path = metadata / source["filename"]
+    require(digest(path) == source["sha256"], "GDC metadata snapshot checksum mismatch")
+    evidence_path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(path, evidence_path)
+    return json.loads(path.read_text())["data"]
+
+
 def match_sources(
     patient: dict[str, Any],
     row: dict[str, str],
@@ -366,6 +378,10 @@ def prepare(work: Path, cache: Path, task: str = "os") -> None:
         cohort["pathdb_csv_sha256"],
     )
     shutil.copyfile(csv_path, work / "sources" / csv_path.name)
+    shutil.copyfile(
+        Path(__file__).with_name("metadata") / "sources.json",
+        work / "sources" / "gdc-sources.json",
+    )
     with csv_path.open(newline="") as stream:
         rows = list(csv.DictReader(stream))
     evidence = []
@@ -382,7 +398,7 @@ def prepare(work: Path, cache: Path, task: str = "os") -> None:
             + urlencode({"expand": "samples,samples.portions,samples.portions.slides"})
         )
         node_url = f"https://pathdb.cancerimagingarchive.net/node/{patient['pathdb_node_id']}?_format=json"
-        case = fetch_json(gdc_url, work / "sources" / (pid + "-gdc.json"))["data"]
+        case = load_gdc_case(patient, work / "sources" / (pid + "-gdc.json"))
         node = fetch_json(node_url, work / "sources" / (pid + "-slide-node.json"))
         match_sources(patient, row, case, node)
         root = work / "patients" / pid
@@ -417,6 +433,7 @@ def prepare(work: Path, cache: Path, task: str = "os") -> None:
                 "ct_instances": ct_records,
                 "slide_sha256": digest(slide),
                 "gdc_url": gdc_url,
+                "gdc_metadata_source": "repository snapshot; see metadata/sources.json",
                 "pathdb_node_url": node_url,
             }
         )

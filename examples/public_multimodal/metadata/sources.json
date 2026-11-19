@@ -1,0 +1,14 @@
+{
+  "C3L-00263": {
+    "filename": "C3L-00263-gdc.json",
+    "source_url": "https://api.gdc.cancer.gov/cases/3a7449d1-7761-4c8e-afc0-9968b1f33305?expand=samples%2Csamples.portions%2Csamples.portions.slides",
+    "recorded_at_utc": "2026-11-19T16:34:52.439525+00:00",
+    "sha256": "5be28a76701c9f593abd93c25f09fb85b1c2e1149700ccdb97b8686297f95607"
+  },
+  "C3L-00422": {
+    "filename": "C3L-00422-gdc.json",
+    "source_url": "https://api.gdc.cancer.gov/cases/67c1aa6e-0bc7-40e2-9742-8f73be3ed450?expand=samples%2Csamples.portions%2Csamples.portions.slides",
+    "recorded_at_utc": "2026-11-19T16:34:53.462593+00:00",
+    "sha256": "7d09bfaab591d420175e7a4872cc999e9d3a9c89b31ad1c61b01fce19a5b7ad2"
+  }
+}
