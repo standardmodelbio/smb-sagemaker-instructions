@@ -3,13 +3,19 @@
 This repository documents the inputs and outputs of the SMB v2.0
 Marketplace model. OS refers to overall survival; TTNT refers to time to next
 treatment or death. The repository contains documentation, synthetic examples,
-and a notebook for using a subscribed model package. It contains no patient data.
+and a notebook for using a subscribed model package. The public multimodal
+walkthrough includes a selection manifest and a preparation helper that download
+deidentified clinical data and images from their public providers. This repository
+contains no private patient data.
+The walkthrough includes eight recorded AWS inference responses and code to
+compare your results with that run.
 
 These instructions cover the product release with streaming Batch Transform
 input. Use the corresponding Marketplace version. Older versions can have
 smaller input limits.
 
 - [Request format and options](#requestjson-schema)
+- [Multimodal batch inference with two public patients](PUBLIC_DATA_WALKTHROUGH.md)
 - [Patient data formats](#patient-data-formats)
 - [Real-time inference](#real-time-inference)
 - [Batch Transform](#batch-transform)

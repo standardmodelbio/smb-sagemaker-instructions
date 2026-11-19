@@ -1,0 +1,234 @@
+[
+  {
+    "patient_id": "C3L-00263",
+    "ablation": "ehr",
+    "task_label": "os",
+    "filename": "C3L-00263-ehr-os.tar",
+    "bytes": 10240,
+    "sha256": "cef3e1274a2cd50e008fd9419ce0c7443f470d086f152eb993b86a0b2cdc6255",
+    "archive_members": 3,
+    "request": {
+      "schema_version": "1.0",
+      "request_uuid": "9e04a8c2-94e4-4167-b9ab-223d1b296f4a",
+      "task_id": "time_to_death",
+      "task_version": "1.0",
+      "task_inputs": {},
+      "observation_cutoff_day_offset": 0,
+      "data_objects": [
+        {
+          "modality": "ehr",
+          "artifact_kind": "archive",
+          "local_path": "/input/ehr"
+        }
+      ]
+    }
+  },
+  {
+    "patient_id": "C3L-00263",
+    "ablation": "ehr-wsi",
+    "task_label": "os",
+    "filename": "C3L-00263-ehr-wsi-os.tar",
+    "bytes": 180951040,
+    "sha256": "8e0c5d9d0861b7c7463551b61156b3fad73d4d90e6c7f35a1050ef997dd163c5",
+    "archive_members": 5,
+    "request": {
+      "schema_version": "1.0",
+      "request_uuid": "51a145e0-fad1-4144-829f-1d1cbd87bd95",
+      "task_id": "time_to_death",
+      "task_version": "1.0",
+      "task_inputs": {},
+      "observation_cutoff_day_offset": 0,
+      "data_objects": [
+        {
+          "modality": "ehr",
+          "artifact_kind": "archive",
+          "local_path": "/input/ehr"
+        },
+        {
+          "modality": "wsi",
+          "artifact_kind": "archive",
+          "local_path": "/input/pathology"
+        }
+      ]
+    }
+  },
+  {
+    "patient_id": "C3L-00263",
+    "ablation": "ehr-ct",
+    "task_label": "os",
+    "filename": "C3L-00263-ehr-ct-os.tar",
+    "bytes": 37713920,
+    "sha256": "f3dca668c80364ce1e7b23f8ed8b0bd0c66b3a6ee8dbae419ed3999152c24c88",
+    "archive_members": 75,
+    "request": {
+      "schema_version": "1.0",
+      "request_uuid": "79b1c081-f864-470d-861f-c3714b733f11",
+      "task_id": "time_to_death",
+      "task_version": "1.0",
+      "task_inputs": {},
+      "observation_cutoff_day_offset": 0,
+      "data_objects": [
+        {
+          "modality": "ehr",
+          "artifact_kind": "archive",
+          "local_path": "/input/ehr"
+        },
+        {
+          "modality": "radiology",
+          "artifact_kind": "archive",
+          "local_path": "/input/radiology"
+        }
+      ]
+    }
+  },
+  {
+    "patient_id": "C3L-00263",
+    "ablation": "ehr-wsi-ct",
+    "task_label": "os",
+    "filename": "C3L-00263-ehr-wsi-ct-os.tar",
+    "bytes": 218654720,
+    "sha256": "7f5566d7cf8b9eb402c7cd97cb14ce4496cb976b93821435166419eb3a3d1224",
+    "archive_members": 77,
+    "request": {
+      "schema_version": "1.0",
+      "request_uuid": "58fae540-35af-452b-8984-c79311be910f",
+      "task_id": "time_to_death",
+      "task_version": "1.0",
+      "task_inputs": {},
+      "observation_cutoff_day_offset": 0,
+      "data_objects": [
+        {
+          "modality": "ehr",
+          "artifact_kind": "archive",
+          "local_path": "/input/ehr"
+        },
+        {
+          "modality": "wsi",
+          "artifact_kind": "archive",
+          "local_path": "/input/pathology"
+        },
+        {
+          "modality": "radiology",
+          "artifact_kind": "archive",
+          "local_path": "/input/radiology"
+        }
+      ]
+    }
+  },
+  {
+    "patient_id": "C3L-00422",
+    "ablation": "ehr",
+    "task_label": "os",
+    "filename": "C3L-00422-ehr-os.tar",
+    "bytes": 10240,
+    "sha256": "5d2c936328992809ee50a26638878c8f37445e9aa663796a6b8570b24b067fe4",
+    "archive_members": 3,
+    "request": {
+      "schema_version": "1.0",
+      "request_uuid": "e9fd4ece-1206-45bf-8001-46c30c658246",
+      "task_id": "time_to_death",
+      "task_version": "1.0",
+      "task_inputs": {},
+      "observation_cutoff_day_offset": 0,
+      "data_objects": [
+        {
+          "modality": "ehr",
+          "artifact_kind": "archive",
+          "local_path": "/input/ehr"
+        }
+      ]
+    }
+  },
+  {
+    "patient_id": "C3L-00422",
+    "ablation": "ehr-wsi",
+    "task_label": "os",
+    "filename": "C3L-00422-ehr-wsi-os.tar",
+    "bytes": 69109760,
+    "sha256": "8a5c60eecfde92d1383b74ae8139bed5c286a9f7a9237748514147efc1592f4f",
+    "archive_members": 5,
+    "request": {
+      "schema_version": "1.0",
+      "request_uuid": "b42210f5-f903-4daa-bdc6-6807ad63c7e6",
+      "task_id": "time_to_death",
+      "task_version": "1.0",
+      "task_inputs": {},
+      "observation_cutoff_day_offset": 0,
+      "data_objects": [
+        {
+          "modality": "ehr",
+          "artifact_kind": "archive",
+          "local_path": "/input/ehr"
+        },
+        {
+          "modality": "wsi",
+          "artifact_kind": "archive",
+          "local_path": "/input/pathology"
+        }
+      ]
+    }
+  },
+  {
+    "patient_id": "C3L-00422",
+    "ablation": "ehr-ct",
+    "task_label": "os",
+    "filename": "C3L-00422-ehr-ct-os.tar",
+    "bytes": 36648960,
+    "sha256": "62373d617b65f6296143c2f47575098d3dbbab82b40b914178a76aa1541f316e",
+    "archive_members": 73,
+    "request": {
+      "schema_version": "1.0",
+      "request_uuid": "b197aabe-5536-417a-8b0b-ac560de4fb97",
+      "task_id": "time_to_death",
+      "task_version": "1.0",
+      "task_inputs": {},
+      "observation_cutoff_day_offset": 0,
+      "data_objects": [
+        {
+          "modality": "ehr",
+          "artifact_kind": "archive",
+          "local_path": "/input/ehr"
+        },
+        {
+          "modality": "radiology",
+          "artifact_kind": "archive",
+          "local_path": "/input/radiology"
+        }
+      ]
+    }
+  },
+  {
+    "patient_id": "C3L-00422",
+    "ablation": "ehr-wsi-ct",
+    "task_label": "os",
+    "filename": "C3L-00422-ehr-wsi-ct-os.tar",
+    "bytes": 105748480,
+    "sha256": "f385b01de6c632cde477b21cad231492e93a6df87447874d659b2389ddce49b0",
+    "archive_members": 75,
+    "request": {
+      "schema_version": "1.0",
+      "request_uuid": "452e084f-9781-4492-af09-676afb04c553",
+      "task_id": "time_to_death",
+      "task_version": "1.0",
+      "task_inputs": {},
+      "observation_cutoff_day_offset": 0,
+      "data_objects": [
+        {
+          "modality": "ehr",
+          "artifact_kind": "archive",
+          "local_path": "/input/ehr"
+        },
+        {
+          "modality": "wsi",
+          "artifact_kind": "archive",
+          "local_path": "/input/pathology"
+        },
+        {
+          "modality": "radiology",
+          "artifact_kind": "archive",
+          "local_path": "/input/radiology"
+        }
+      ]
+    }
+  }
+]
