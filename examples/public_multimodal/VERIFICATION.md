@@ -6,6 +6,10 @@ rechecked the cached public assets, and ran the walkthrough in AWS.
 All eight inference responses passed validation. The selected assets are in
 [cohort.json](cohort.json), and the measured outputs are in
 [reference-run/](reference-run/README.md). No dataset credentials were needed.
+Later that day, a separate test executed the ready notebook through JupyterLab
+from a fresh environment and empty download cache. All 13 code cells completed,
+including eight matching AWS predictions and cleanup. See
+[notebook-run/](notebook-run/README.md) for the executed notebook and evidence.
 
 ## Patient and specimen matching
 
@@ -88,7 +92,9 @@ Local simulated responses exercised collection and identity checks, including
 missing outputs and invalid scores. Recovery and cleanup were checked against
 a simulated active job. The November 19 run then exercised the guide's input
 preparation, submission, polling, and response validation cells with live AWS
-clients. We supplied the account's existing role, bucket, and subscribed package.
+clients. That first run executed Python blocks extracted from the Markdown
+guide in a shared Python namespace. It did not open or execute a Jupyter
+notebook. We supplied the account's existing role, bucket, and subscribed package.
 We independently fetched and validated all eight S3 outputs a second time.
 
 The eight TARs totaled 648,847,360 bytes in the validation run. The helper's
@@ -130,8 +136,9 @@ configuration, and checksums. See [request-index.json](reference-run/request-ind
 for the submitted UUIDs and input archive hashes. The
 [CSV](reference-run/predictions.csv) contains full precision scores, and
 the [reference directory](reference-run/README.md) links the original S3 output
-bytes. These are measured responses, not simulated examples. Independent-run
-numerical repeatability and clinical accuracy were not evaluated.
+bytes. These are measured responses, not simulated examples. The separate
+notebook run below reproduced all eight scores exactly at the returned
+precision. Clinical accuracy was not evaluated.
 
 The guide's recovery and cleanup cells also ran against the completed job.
 A separate AWS check confirmed that its temporary model was absent and its
@@ -139,3 +146,48 @@ S3 prefix contained no objects. The bucket had versioning disabled, so no
 older versions or delete markers remained. Local inputs and results were
 retained, along with AWS job history and CloudWatch logs. The cleanup checks
 and timestamp are recorded in [run.json](reference-run/run.json).
+
+## Fresh JupyterLab test on November 19, 2026
+
+The ready notebook was opened in JupyterLab 4.6.6 with a newly created Python
+3.12.0 virtual environment on macOS arm64. The environment initially contained
+JupyterLab and its kernel dependencies. Boto3, Polars, NumPy, pydicom, and
+OpenSlide were absent. The notebook's installation cell installed them.
+The public asset cache was absent before execution.
+
+We supplied the four documented AWS settings as environment variables, selected
+the documented kernel, and chose **Run > Run All Cells** once. The 13 code cells
+executed consecutively with counts 1 through 13 and no errors. No cell source
+was edited or extracted for execution. The recovery cell correctly did nothing
+during this normal run. It was not a kernel restart recovery test.
+
+An initial fresh attempt had stopped before creating AWS resources because the
+GDC API hostname failed to resolve. The fixed tutorial now uses the two public
+GDC metadata responses recorded during the earlier successful run, with hashes
+and source URLs. We then started the successful test with another new
+environment and empty cache. The clinical CSV,
+both whole-slide images, both CT archives, and the PathDB slide records were
+downloaded again. The GDC records were checked from the bundled snapshots.
+
+The helper checked both patient and specimen matches, the slide day zero,
+and CT days -1 and -109 across all 140 instances. All eight patient file
+fingerprints and request settings matched the reference run, apart from the
+new request UUIDs. The hosted job
+`smb-public-20261119-142907-4061f891` completed in 482.871 seconds from creation.
+It used the same subscribed image, instance type, and network isolation.
+All eight response identities and scores passed the notebook checks. Every
+returned score equaled the earlier run's score at full returned precision.
+
+The notebook removed its temporary model and S3 objects. A separate AWS read
+confirmed the completed job, absent model, and zero remaining objects, versions,
+or delete markers under the run prefix. The bucket had versioning disabled.
+The local Jupyter server and kernel were then stopped. Local results, AWS job
+history, and CloudWatch logs were retained.
+
+The [execution record](notebook-run/run.json) contains the code cell hashes,
+execution counts, versions, timings, and cleanup checks. The
+[executed notebook](notebook-run/executed.ipynb) preserves the tested file and
+its outputs. Its explanatory text predates this added verification summary;
+all executable cells still match the distributed notebook. This test used
+existing AWS account prerequisites. It did not test a new Marketplace purchase
+or creation of a new AWS account, role, bucket, or quota.

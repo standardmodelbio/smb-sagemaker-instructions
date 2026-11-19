@@ -85,16 +85,50 @@ transform quota, and request an increase if its value is zero.
 
 ## 2. Set up the notebook
 
-Download this repository, including `examples/public_multimodal/`, and open
-a Python 3.12 notebook in its root directory. You can use SageMaker Studio or
-JupyterLab. Copy each Python block into a separate cell and run them in order.
-Skip the recovery cell in step 10 unless you have restarted the notebook.
+Download this repository, including `examples/public_multimodal/`. Open the
+included [public_multimodal_walkthrough.ipynb](public_multimodal_walkthrough.ipynb).
+It already contains the explanations and executable cells below. You do not
+need to create a notebook or copy code blocks. The notebook keeps each step
+and its output together while you learn the workflow. The product accepts
+SageMaker API requests; your production pipeline can make the same Boto3
+calls from a Python program without Jupyter.
+
+For a fresh local environment on macOS or Linux, install Python 3.12, then run
+these commands from the repository root:
+
+```bash
+python3.12 -m venv .venv-public-demo
+source .venv-public-demo/bin/activate
+python -m pip install --no-cache-dir "jupyterlab>=4,<5" "ipykernel>=6,<8"
+python -m ipykernel install --sys-prefix --name smb-public-demo --display-name "Python 3.12 (SMB public demo)"
+jupyter lab public_multimodal_walkthrough.ipynb
+```
+
+Select the **Python 3.12 (SMB public demo)** kernel. In SageMaker Studio, open
+the same notebook in the repository root and select a Python 3.12 kernel.
+See the [JupyterLab installation instructions](https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html)
+and [IPython kernel instructions](https://ipython.readthedocs.io/en/stable/install/kernel_install.html)
+if you need to configure another environment.
+
+Fill in the four AWS settings in the configuration cell. Then choose
+**Run > Run All Cells** once, or run cells individually in order. Run All
+installs the data packages, prepares inputs, runs the paid AWS job, verifies
+the results, and removes its temporary model and current S3 objects. Your
+downloaded data and results stay on disk. The recovery cell does nothing
+during a normal run. Rerunning the whole notebook creates another job.
+
+On November 19, 2026, we tested this notebook through JupyterLab's **Run All
+Cells** in a new Python 3.12 environment with an empty download cache. All 13
+code cells completed, including all eight AWS results and cleanup. The
+[execution record](examples/public_multimodal/notebook-run/README.md) includes
+the saved notebook with outputs, package versions, and independent AWS checks.
+We used an account with the subscription, role, bucket, and quota already set up.
 
 The notebook needs internet access for the public downloads. You do not need
 a GDC or TCIA account for the selected files. Install the packages:
 
 ```python
-%pip install "boto3>=1.43.63,<2" "polars==1.41.2" "pydicom>=3,<4" "openslide-python>=1.4,<2" "openslide-bin>=4,<5"
+%pip install --no-cache-dir -r examples/public_multimodal/requirements.txt
 ```
 
 OpenSlide is used to check that the slide files can be read. The `openslide-bin`
@@ -106,6 +140,12 @@ SageMaker notebooks can use their attached role for AWS credentials. For a
 local notebook using IAM Identity Center, run `aws configure sso` and then
 `aws sso login --profile YOUR_PROFILE` in a terminal. Set
 `AWS_PROFILE=YOUR_PROFILE` in the terminal where you start JupyterLab.
+An existing default AWS credential profile also works.
+
+You can instead supply the four settings through `SMB_REGION`,
+`SMB_MODEL_PACKAGE_ARN`, `SMB_EXECUTION_ROLE_ARN`, and `SMB_BUCKET` environment
+variables before starting JupyterLab. The configuration cell reads them by
+default. These identify resources; use your AWS credential profile for login.
 
 Fill in your four AWS settings. `BUCKET` is a bucket name without `s3://` or
 a folder. Input preparation in steps 3 to 5 does not create any AWS resources.
@@ -115,6 +155,7 @@ import csv
 import hashlib
 import json
 import math
+import os
 import subprocess
 import sys
 import tarfile
@@ -126,12 +167,15 @@ import boto3
 import polars as pl
 from botocore.exceptions import ClientError
 
-REGION = "us-east-1"
-MODEL_PACKAGE_ARN = ""  # Your subscribed model package in this region.
-EXECUTION_ROLE_ARN = ""  # Your SageMaker execution role.
-BUCKET = ""  # Your existing bucket in the same region.
+REGION = os.environ.get("SMB_REGION", "us-east-1")
+MODEL_PACKAGE_ARN = os.environ.get("SMB_MODEL_PACKAGE_ARN", "")  # Or paste your package ARN.
+EXECUTION_ROLE_ARN = os.environ.get("SMB_EXECUTION_ROLE_ARN", "")  # Or paste your role ARN.
+BUCKET = os.environ.get("SMB_BUCKET", "")  # Or paste your bucket name.
 INSTANCE_TYPE = "ml.g5.2xlarge"
 
+assert sys.version_info[:2] == (3, 12), "Select a Python 3.12 kernel."
+assert MODEL_PACKAGE_ARN and EXECUTION_ROLE_ARN and BUCKET, "Fill in the four AWS settings."
+print("Notebook kernel:", sys.executable)
 helper = Path("examples/public_multimodal/prepare_inputs.py")
 assert helper.is_file(), "Open the notebook in the repository root."
 run_id = "smb-public-" + time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:8]
@@ -166,6 +210,12 @@ The matching GDC cases are
 [C3L-00263](https://portal.gdc.cancer.gov/cases/3a7449d1-7761-4c8e-afc0-9968b1f33305)
 and [C3L-00422](https://portal.gdc.cancer.gov/cases/67c1aa6e-0bc7-40e2-9742-8f73be3ed450).
 GDC provides each specimen's procurement day and its linked slide identifier.
+The repository includes the two public GDC responses recorded on November 19,
+2026, with their original URLs and SHA-256 hashes in the
+[metadata source record](examples/public_multimodal/metadata/sources.json).
+The helper verifies and uses these fixed metadata snapshots. It does not need
+the live GDC API, whose hostname failed to resolve during notebook testing.
+Clinical tables and both sets of images are downloaded from TCIA and PathDB.
 The CT instances come from the public NBIA API linked by the
 [CPTAC-LUAD collection](https://www.cancerimagingarchive.net/collection/cptac-luad/).
 
@@ -204,7 +254,7 @@ The helper checks the following before it writes the request index:
 5. Both slide checksums and every CT instance checksum match the verified
    assets. Both slides open in OpenSlide, and all 140 CT pixel arrays decode.
 
-It saves the downloaded source metadata under `sources/` and its matching
+It saves the downloaded and bundled source metadata under `sources/` and its matching
 evidence in `verification.json`. The large downloads are cached separately.
 If a step fails, correct the reported problem and use a new run folder. Keep
 the cache so you do not have to download successful files again. Never bypass
@@ -549,7 +599,7 @@ their request UUIDs. Read an individual response as follows:
 
 ### Recorded AWS outputs
 
-We ran these eight requests in AWS on November 19, 2026. The job completed on
+The notebook ran these eight requests in AWS on November 19, 2026. The job completed on
 one `ml.g5.2xlarge` in `us-east-1`, with network isolation enabled. All eight
 responses passed the checks above. The measured OS scores were:
 
@@ -559,14 +609,14 @@ responses passed the checks above. The measured OS scores were:
 | `C3L-00422` | 272.53007848 | 277.64935748 | 345.72121953 | 319.67090811 |
 
 The table is rounded to eight decimal places. The
-[recorded CSV](examples/public_multimodal/reference-run/predictions.csv)
+[recorded CSV](examples/public_multimodal/notebook-run/predictions.csv)
 contains the full values. For example, the actual response for C3L-00263 with
 clinical data, its slide, and CT was:
 
 ```json
 {
   "schema_version": "1.0",
-  "request_uuid": "58fae540-35af-452b-8984-c79311be910f",
+  "request_uuid": "7d04b3eb-a8b8-4e0f-817b-2ae5f8ba5ff5",
   "task_id": "time_to_death",
   "task_version": "1.0",
   "prediction": 260.38882875210766,
@@ -585,16 +635,22 @@ Its image digest was
 Use your subscription's package for your region. A different model release can
 produce different scores.
 
-AWS reported 526.541 seconds from job creation to completion,
-or about 8.8 minutes. This includes provisioning and model startup.
-It is one observed run, not a promised runtime or a throughput benchmark.
-The [run record](examples/public_multimodal/reference-run/run.json) contains the
-exact timestamps and configuration. The
-[reference directory](examples/public_multimodal/reference-run/README.md)
-contains all eight original response files and the submitted request index.
+AWS reported 482.871 seconds from job creation to completion,
+or about 8.0 minutes. This includes provisioning and model startup.
+An earlier run took 526.541 seconds, or about 8.8 minutes. These are observed
+times, not a promised runtime or a throughput benchmark.
+The [notebook run record](examples/public_multimodal/notebook-run/run.json)
+contains the exact timestamps and configuration. The
+[notebook evidence directory](examples/public_multimodal/notebook-run/README.md)
+contains all eight responses as saved by the notebook and the submitted request
+index. Every score matched the
+[earlier reference run](examples/public_multimodal/reference-run/README.md)
+exactly at the returned precision.
 
-The following optional cell compares your OS scores with this recorded run.
-It applies only to the same image and unchanged public input preparation.
+The following cell compares your OS scores with the earlier reference run.
+It applies only to the same model image, patient file contents, and request
+settings. Patient file fingerprints exclude generated request UUIDs and TAR
+timestamps, so a fresh download can be compared with the recorded run.
 It checks numerical agreement using relative tolerance `1e-6` and absolute
 tolerance `1e-8`. If scores differ, retain both runs and investigate the package,
 inputs, and runtime before treating the difference as a model finding.
@@ -602,12 +658,22 @@ inputs, and runtime before treating the difference as a model finding.
 ```python
 reference_dir = Path("examples/public_multimodal/reference-run")
 reference_run = json.loads((reference_dir / "run.json").read_text())
+reference_index = json.loads((reference_dir / "request-index.json").read_text())
 current_package = json.loads((work / "package-description.json").read_text())
 current_digest = current_package["InferenceSpecification"]["Containers"][0].get("ImageDigest")
+
+def comparison_inputs(items):
+    return {
+        (item["patient_id"], item["ablation"], item["task_label"]): {
+            "patient_input_sha256": item["patient_input_sha256"],
+            "request": {key: value for key, value in item["request"].items() if key != "request_uuid"},
+        }
+        for item in items
+    }
+
 same_setup = (
     current_digest == reference_run["image_digest"]
-    and hashlib.sha256((work / "cohort.json").read_bytes()).hexdigest() == reference_run["cohort_sha256"]
-    and hashlib.sha256(Path("examples/public_multimodal/prepare_inputs.py").read_bytes()).hexdigest() == reference_run["preparation_script_sha256"]
+    and comparison_inputs(index) == comparison_inputs(reference_index)
     and {row["task"] for row in summary} == {"os"}
 )
 if same_setup:
@@ -623,12 +689,13 @@ if same_setup:
     assert not differences, differences
     print("PASS: all 8 OS scores match the recorded AWS run within tolerance.")
 else:
-    print("Numerical comparison skipped: this run uses a different image, input preparation, or task.")
+    print("Numerical comparison skipped: this run uses a different image, patient input, or request setting.")
 ```
 
 These scores verify the example's inference workflow. They do not establish
-clinical accuracy or predict a number of survival days. The reference contains
-one hosted run; it does not establish repeatability across independent runs.
+clinical accuracy or predict a number of survival days. The two runs establish
+agreement for these inputs and this package on the tested instance type.
+They do not establish agreement across other releases or hardware.
 
 ## 9. Interpret the comparison and retain the evidence
 
@@ -672,20 +739,33 @@ Run cleanup after saving your results, including when an earlier step failed.
 If the job is still running, this cell stops it and waits for a terminal state
 before deleting the model resource. It leaves your local files intact.
 
-If you restarted the notebook, first rerun only the import lines in step 2,
-then restore your saved run with this cell. Replace the path with the path
-printed in step 6.
-Skip this recovery cell if your original notebook session is still open.
+Leave `RECOVER_RUN` empty for a normal run. If you restarted the kernel,
+run the installation cell, set `RECOVER_RUN` to the folder printed in step 6,
+and run this recovery cell. Then run the cleanup cell. To collect completed
+outputs first, run step 8 after recovery. Do not rerun the configuration or
+submission cells to recover an existing job.
 
 ```python
-# Recovery only: replace this path before running this cell.
-work = Path("public-data-demo/PASTE_YOUR_RUN_FOLDER_NAME")
-state = json.loads((work / "run.json").read_text())
-index = json.loads((work / "request-index.json").read_text())
-REGION, BUCKET, prefix = state["region"], state["bucket"], state["prefix"]
-PATIENT_IDS = list(dict.fromkeys(item["patient_id"] for item in index))
-session = boto3.Session(region_name=REGION)
-sm, s3 = session.client("sagemaker"), session.client("s3")
+RECOVER_RUN = ""  # Recovery only, e.g. "public-data-demo/smb-public-YOUR_RUN".
+if RECOVER_RUN:
+    import csv
+    import hashlib
+    import json
+    import math
+    import time
+    from pathlib import Path
+    import boto3
+    import polars as pl
+    from botocore.exceptions import ClientError
+
+    work = Path(RECOVER_RUN)
+    state = json.loads((work / "run.json").read_text())
+    index = json.loads((work / "request-index.json").read_text())
+    REGION, BUCKET, prefix = state["region"], state["bucket"], state["prefix"]
+    PATIENT_IDS = list(dict.fromkeys(item["patient_id"] for item in index))
+    session = boto3.Session(region_name=REGION)
+    sm, s3 = session.client("sagemaker"), session.client("s3")
+    print("Restored:", state["job_name"])
 ```
 
 Then run the cleanup cell. It deletes only the exact input and output keys for
@@ -725,7 +805,20 @@ for item in index:
     keys.append({"Key": prefix + "output/" + item["filename"] + ".out"})
 deleted = s3.delete_objects(Bucket=BUCKET, Delete={"Objects": keys})
 assert not deleted.get("Errors"), deleted.get("Errors")
-print("Job is no longer running; model and current S3 objects are removed.")
+try:
+    sm.describe_model(ModelName=state["model_name"])
+except ClientError as error:
+    if not is_missing_resource(error):
+        raise
+else:
+    raise AssertionError("The temporary model still exists.")
+remaining = []
+for page in s3.get_paginator("list_objects_v2").paginate(Bucket=BUCKET, Prefix=prefix):
+    remaining.extend(obj["Key"] for obj in page.get("Contents", []))
+assert not remaining, remaining
+cleanup = {"job_status": status, "temporary_model_absent": True, "current_s3_objects_remaining": 0}
+(work / "cleanup.json").write_text(json.dumps(cleanup, indent=2))
+print("PASS: job is terminal; temporary model and current S3 objects are removed.")
 print("Local inputs and results remain in", work.resolve())
 ```
 

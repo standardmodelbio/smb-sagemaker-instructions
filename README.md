@@ -16,6 +16,7 @@ smaller input limits.
 
 - [Request format and options](#requestjson-schema)
 - [Multimodal batch inference with two public patients](PUBLIC_DATA_WALKTHROUGH.md)
+- [Run the public multimodal notebook](public_multimodal_walkthrough.ipynb)
 - [Patient data formats](#patient-data-formats)
 - [Real-time inference](#real-time-inference)
 - [Batch Transform](#batch-transform)

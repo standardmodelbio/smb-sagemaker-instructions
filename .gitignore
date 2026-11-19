@@ -3,3 +3,4 @@
 __pycache__/
 *-result.json
 public-data-demo/
+.venv-public-demo/
