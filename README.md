@@ -146,9 +146,119 @@ Parquet file, CSV export, PDF, or free-text note does not satisfy this interface
 Each archive represents one patient's data. The model does not split a table
 containing multiple patients into separate requests.
 
-At least one usable EHR Parquet table is required, including when sending WSI
-or radiology assets. Table names are significant. Distinct EHR files with the
-same basename are rejected because they would map to the same table.
+Include a nonempty `patient_characteristics.parquet` for each patient,
+including when sending WSI or radiology assets. Supply at least one dated
+clinical or image event at or before the observation cutoff. Demographics alone
+do not provide a dated history. Table names are significant. Distinct EHR files
+with the same basename are rejected because they would map to the same table.
+
+The clinical table reference below lists the filenames and columns consumed
+by the service. Put these tables under `input/ehr/` and reference that directory
+with `modality: "ehr"`. Each file contains records for the same single patient.
+Additional table names or columns do not automatically become model inputs.
+
+#### Column types and missing values
+
+| Column group | What to write |
+|---|---|
+| Day offsets, including all `*_INTERVAL` columns | Whole numbers of days relative to the same origin as `observation_cutoff_day_offset`. Negative offsets are allowed. Use Parquet integers for new inputs. |
+| Identifiers and codes | Strings. Use the same identifier type and value on both sides of a join. |
+| `AGE`, `INITIAL_DX_YEAR`, `LOT`, `ECOG`, `KPS` | Integers. `AGE` is age in years at diagnosis; `INITIAL_DX_YEAR` is the calendar year. `LOT` is the line of therapy number. |
+| Measurements and doses | Numeric values with their recorded units. Lab and biomarker results can also contain qualitative strings, such as `"positive"`. |
+| Descriptions, categories, and note or report text | Strings. Use the recorded clinical meaning. |
+| Missing values | Parquet nulls. Leave unknown optional values null or omit the optional column. Do not invent a zero or a day for an unknown value. |
+
+A nonempty dated table must contain its required date column even if some rows
+have null dates. Rows without a usable date are omitted. Events after the cutoff
+are excluded. Patient context has no date, so include only context known at the
+cutoff. For notes and reports, use the day the information became available.
+
+#### Patient characteristics
+
+Write one row to `patient_characteristics.parquet`. Use `PTID` for your own
+patient identifier. The service returns `request_uuid` to identify the request;
+it does not use `PTID` to split a file containing multiple patients.
+
+| Column | Meaning |
+|---|---|
+| `PTID` | Your patient identifier. |
+| `SEX` | Recorded sex. |
+| `RACE` | Recorded race. |
+| `ETHNICITY` | Recorded ethnicity. |
+| `AGE` | Age in years at diagnosis. |
+| `STATE` | Recorded state of residence. |
+| `SMOKING_STATUS` | Recorded smoking status. |
+| `ALCOHOL_STATUS` | Recorded alcohol use status. |
+| `MENOPAUSE_STATUS` | Recorded menopause status. |
+| `FAM_HX` | Recorded family history. |
+
+The clinical values are optional. This is the public walkthrough's table for
+demographic context. The service reads its first row.
+
+The service also recognizes `VITAL_STATUS`, `LAST_ALIVE_INTERVAL`,
+`DEATH_INTERVAL`, and `CAUSE_OF_DEATH` as optional follow-up fields in this
+table. They can add dated follow-up events or limit the patient timeline.
+They are not required to request an OS or TTNT prediction. Leave future
+outcomes out of inference inputs. For known follow-up, `LAST_ALIVE_INTERVAL`
+and `DEATH_INTERVAL` use the same day axis as the cutoff. Death handling uses
+a `VITAL_STATUS` value beginning with `Dead`, ignoring case, together with a
+non-null death interval. `CAUSE_OF_DEATH` is text.
+
+#### Dated clinical tables
+
+Each row below names a separate Parquet file. The required columns must be
+present when that file is nonempty. The clinical columns are the additional
+values the service reads. Include the values you have; missing clinical
+columns are allowed. You can omit an entire optional table.
+
+| Table filename | Required columns | Clinical columns |
+|---|---|---|
+| `diagnosis.parquet` | `INITIAL_DX_INTERVAL` | `DX_CODE`, `ANATOMIC_SITE`, `HISTOLOGY`, `GRADE`, `INITIAL_DX_YEAR` |
+| `labs.parquet` | `TEST_INTERVAL` | `CD_DESC`, `CD`, `TEST_RESULT_VALUE`, `TEST_RESULT_UOM` |
+| `icd10.parquet` | `CD_INTERVAL` | `CD`, `CD_DESC` |
+| `encounter.parquet` | `START_INTERVAL` | `ENCOUNTER_TYPE`, `HOSPITALIZATION_CLASS`, `HOSPITALIZATION_URGENCY` |
+| `procedure.parquet` | `START_INTERVAL` | `PROC_NAME`, `PROC_CD`, `PROC_STATUS` |
+| `staging_events.parquet` | `EVENT_INTERVAL` | `EVENT`, `AJCC_STAGE`, `T_STAGE`, `N_STAGE`, `M_STAGE`, `TNM_DERIVED_STAGE`, `STAGE_GROUP` |
+| `comorbidity_events.parquet` | `ONSET_INTERVAL` | `CATEGORY`, `FIRST_CODE` |
+| `metastatic_disease.parquet` | `METS_INTERVAL` | `METS_ANATOMIC_SITE` |
+| `biomarker.parquet` | `TEST_RESULT_INTERVAL` | `BIOMARKER`, `BIOMARKER_RESULT` |
+| `surgery.parquet` | `SURGERY_INTERVAL` | `SURGERY`, `MARGINS` |
+| `radiation.parquet` | `RADIATION_START_INTERVAL` | `RADIATION_TYPE`, `RADIATION_LOCATION`, `DOSE`, `FRACTIONS` |
+| `treatment.parquet` | `LOT`, `ANTINEOPLASTIC_START_INTERVAL` | `ANTINEOPLASTIC`, `INTENT` |
+| `performance.parquet` | `ECOG_DT_INTERVAL`, `KPS_DT_INTERVAL` | `ECOG`, `KPS` |
+| `medications.parquet` | `START_INTERVAL` | `MEDICATION_NAME`, `ROUTE`, `DOSE`, `DOSE_UOM` |
+| `vitals.parquet` | `ENCOUNTER_ID` | `HEIGHT`, `WEIGHT`, `BP_SYSTOLIC`, `BP_DIASTOLIC`, `TEMPERATURE` |
+| `notes.parquet` | `NOTE_INTERVAL` | `NOTE_TYPE`, `NOTE_SUBTYPE`, `DEID_NOTE_TXT` |
+| `imaging.parquet` | `RESULT_INTERVAL`, `DEID_ACCESSION_NUMBER` | `REPORT_TYPE`, `REPORT_SUBTYPE`, `DEID_REPORT_TXT` |
+| `reports.parquet` | `RESULT_INTERVAL`, `DEID_ACCESSION_NUMBER` | `REPORT_TYPE`, `REPORT_SUBTYPE`, `DEID_REPORT_TXT` |
+
+Apply these table-specific rules:
+
+- `diagnosis.parquet` describes the initial diagnosis. The service reads its
+  first row. Put separately dated staging in `staging_events.parquet`.
+- For labs, supply a readable test name in `CD_DESC`. The service falls back
+  to `CD` when the description is empty. Put the result's unit in
+  `TEST_RESULT_UOM`.
+- For treatment, give each drug its own start day and line of therapy number.
+  Rows missing either value are omitted. Treatment end dates and
+  discontinuation reasons are not used as start-day features.
+- For performance scores, include both date columns. If you only have ECOG,
+  keep `KPS_DT_INTERVAL` null. Each score uses its own date.
+- Vitals require `encounter.parquet` with `ENCOUNTER_ID` and `START_INTERVAL`.
+  Each vital row gets its day by matching `ENCOUNTER_ID`. Use an unambiguous
+  encounter ID and the same type in both tables. Unmatched or undated rows
+  are omitted. Supply height in cm, weight in kg, blood pressure in mmHg,
+  and temperature in degrees Fahrenheit.
+- Radiation `DOSE` is in cGy. Dose and fraction counts are attached to the
+  start day, so include only values known on that day.
+- `imaging.parquet` contains radiology report text, and `reports.parquet`
+  contains pathology report text. Their accession column helps identify
+  duplicate reports. These tables do not contain image pixels. To include
+  images, use the metadata tables and image files described below.
+- Standalone PDF or text files are not supported EHR objects. Put note text
+  in `DEID_NOTE_TXT`, or report text in `DEID_REPORT_TXT`, with its date.
+
+#### Small synthetic example
 
 The bundled examples contain these entirely synthetic tables:
 
@@ -165,9 +275,9 @@ The bundled examples contain these entirely synthetic tables:
 | 10 | hemoglobin | x | 12.0 | g/dL |
 | 200 | future | y | 99.0 | g/dL |
 
-The day-200 lab is beyond the day-100 cutoff. These files are a small working
-input example, not a complete schema for every supported EHR table. Preserve
-the product's required table names and columns when supplying additional tables.
+The day-200 lab is beyond the day-100 cutoff. For your own data, use the
+clinical table reference above and the imaging metadata below. Preserve the
+filenames and column names when mapping your source records.
 
 ### Pathology whole-slide images
 

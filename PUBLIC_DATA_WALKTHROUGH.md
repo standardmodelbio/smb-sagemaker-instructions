@@ -834,10 +834,13 @@ patient's clinical tables and correctly linking their images.
    Transform configuration and require one matching response per archive.
    Retain input checksums and the package version before scaling up.
 
-Use the [input reference](README.md#patient-data-formats) for the supported
-formats. At least one usable EHR table is required, including for multimodal
-requests. Obtain the supported schema for your subscribed version before
-adding EHR tables not described in this repository.
+Use the [clinical table reference](README.md#ehr) for filenames, column types,
+and required fields. It covers the walkthrough's demographics and diagnosis
+tables, plus optional clinical history such as labs, treatment, and notes.
+Include `patient_characteristics.parquet` for each patient and dated clinical
+or image events at or before the cutoff. The same README documents the
+[slide metadata](README.md#pathology-whole-slide-images) and
+[CT metadata](README.md#ct-and-other-radiology-data).
 
 The default example runs OS only to keep the job small. To try time to next
 treatment or death, create a new run folder and add `"--task", "ttnt"` to the
