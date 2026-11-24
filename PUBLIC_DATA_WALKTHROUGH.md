@@ -62,20 +62,12 @@ use. They are different values. The package can belong to the seller's account.
 The execution role must belong to yours.
 [AWS Marketplace deployment instructions](https://docs.aws.amazon.com/marketplace/latest/buyerguide/deploying-ml-products.html)
 
-Your notebook or local AWS identity needs permission to create, describe, stop,
-and clean up this job and its model. It also needs permission to describe the
-model package, pass the execution role with `iam:PassRole`, and read and write
-the tutorial's S3 objects. Cleanup also needs permission to delete those objects.
-
-The execution role must trust `sagemaker.amazonaws.com` and have the required
-model image and logging permissions. It must be able to list the bucket, read
-the input objects, and write the output objects. If your bucket uses a customer
-managed KMS key, the relevant identities also need access to that key.
-
-To create the role, follow AWS's
-[SageMaker execution role instructions](https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html).
-The standard `AmazonSageMakerFullAccess` policy does not give access to every
-arbitrarily named S3 bucket. Add access to your chosen bucket if needed.
+If you need to create a role or grant permissions, follow
+[Set up permissions for the batch walkthrough](AWS_SETUP.md). It includes
+commands to generate policies for your bucket and package, create the execution
+role, and grant the notebook identity permission to submit and clean up jobs.
+Use those instructions once, then return here. The notebook identity and the
+SageMaker execution role are separate identities with separate permissions.
 
 This guide uses one `ml.g5.2xlarge` instance. Check that your subscribed version
 supports it and that your account has a nonzero SageMaker quota for
@@ -85,16 +77,41 @@ transform quota, and request an increase if its value is zero.
 
 ## 2. Set up the notebook
 
-Download this repository, including `examples/public_multimodal/`. Open the
-included [public_multimodal_walkthrough.ipynb](public_multimodal_walkthrough.ipynb).
-It already contains the explanations and executable cells below. You do not
-need to create a notebook or copy code blocks. The notebook keeps each step
-and its output together while you learn the workflow. The product accepts
-SageMaker API requests; your production pipeline can make the same Boto3
-calls from a Python program without Jupyter.
+The included [public_multimodal_walkthrough.ipynb](public_multimodal_walkthrough.ipynb)
+already contains the explanations and executable cells below. You do not need
+to generate a notebook or copy code blocks. Jupyter keeps each step and its
+output together while you learn. Your production pipeline can make the same
+Boto3 calls from a Python program.
 
-For a fresh local environment on macOS or Linux, install Python 3.12, then run
-these commands from the repository root:
+For a fresh local environment on macOS or Linux, install
+[Python 3.12](https://www.python.org/downloads/),
+[Git](https://git-scm.com/downloads), and
+[AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+Then download the whole repository:
+
+```bash
+git clone https://github.com/standardmodelbio/smb-sagemaker-instructions.git
+cd smb-sagemaker-instructions
+```
+
+Sign in before starting Jupyter. For IAM Identity Center, replace
+`YOUR_PROFILE` with your profile name. If it is already configured, skip
+`aws configure sso`:
+
+```bash
+aws configure sso --profile YOUR_PROFILE
+aws sso login --profile YOUR_PROFILE
+export AWS_PROFILE=YOUR_PROFILE
+aws sts get-caller-identity
+```
+
+Confirm that `Account` is the account with your Marketplace subscription. If
+you use an existing non-SSO profile, use the `export` and identity check commands
+after refreshing its credentials through your normal login process. A configured
+`default` profile works with `export AWS_PROFILE=default`. Keep credentials out
+of notebook cells. See [AWS login instructions](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html).
+
+In the same terminal, create the environment and launch Jupyter:
 
 ```bash
 python3.12 -m venv .venv-public-demo
@@ -104,6 +121,12 @@ python -m ipykernel install --sys-prefix --name smb-public-demo --display-name "
 jupyter lab public_multimodal_walkthrough.ipynb
 ```
 
+If Jupyter was already running before you set `AWS_PROFILE`, stop its server
+and launch it again from this terminal. Restarting only the kernel does not
+update the server's environment. In SageMaker Studio, use the notebook's
+attached role for credentials and grant that role the caller permissions in
+[AWS setup](AWS_SETUP.md); the local SSO steps are unnecessary there.
+
 Select the **Python 3.12 (SMB public demo)** kernel. In SageMaker Studio, open
 the same notebook in the repository root and select a Python 3.12 kernel.
 See the [JupyterLab installation instructions](https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html)
@@ -112,10 +135,18 @@ if you need to configure another environment.
 
 Fill in the four AWS settings in the configuration cell. Then choose
 **Run > Run All Cells** once, or run cells individually in order. Run All
-installs the data packages, prepares inputs, runs the paid AWS job, verifies
-the results, and removes its temporary model and current S3 objects. Your
-downloaded data and results stay on disk. The recovery cell does nothing
-during a normal run. Rerunning the whole notebook creates another job.
+installs the data packages, checks AWS access, prepares inputs, runs the paid
+AWS job, verifies the results, and then runs cleanup. Your downloaded data and
+results stay on disk. The recovery cell does nothing during a normal run.
+Rerunning the whole notebook creates another job.
+
+If any cell fails, Run All stops before later cells, including cleanup. If you
+reached the upload step, save the error and run the step 10 cleanup cell manually.
+After restarting the kernel, run the installation cell and step 10 recovery
+cell first. A closed browser or lost connection does not stop an AWS job.
+The polling cell requests a stop when its 90-minute wait expires, but you must
+still run cleanup and verify that the job is terminal. Keep the printed run
+folder so you can recover it. [Go to cleanup and recovery](#10-clean-up-the-tutorial-resources).
 
 The notebook needs internet access for the public downloads. You do not need
 a GDC or TCIA account for the selected files. Install the packages:
@@ -128,12 +159,6 @@ OpenSlide is used to check that the slide files can be read. The `openslide-bin`
 package supplies its native library. See the
 [OpenSlide installation instructions](https://openslide.org/api/python/#installing)
 if your environment does not support that package.
-
-SageMaker notebooks can use their attached role for AWS credentials. For a
-local notebook using IAM Identity Center, run `aws configure sso` and then
-`aws sso login --profile YOUR_PROFILE` in a terminal. Set
-`AWS_PROFILE=YOUR_PROFILE` in the terminal where you start JupyterLab.
-An existing default AWS credential profile also works.
 
 You can instead supply the four settings through `SMB_REGION`,
 `SMB_MODEL_PACKAGE_ARN`, `SMB_EXECUTION_ROLE_ARN`, and `SMB_BUCKET` environment
@@ -165,12 +190,33 @@ MODEL_PACKAGE_ARN = os.environ.get("SMB_MODEL_PACKAGE_ARN", "")  # Or paste your
 EXECUTION_ROLE_ARN = os.environ.get("SMB_EXECUTION_ROLE_ARN", "")  # Or paste your role ARN.
 BUCKET = os.environ.get("SMB_BUCKET", "")  # Or paste your bucket name.
 INSTANCE_TYPE = "ml.g5.2xlarge"
+OWN_DATA_MANIFEST = os.environ.get("SMB_OWN_DATA_MANIFEST", "")  # Empty runs the public example.
 
 assert sys.version_info[:2] == (3, 12), "Select a Python 3.12 kernel."
 assert MODEL_PACKAGE_ARN and EXECUTION_ROLE_ARN and BUCKET, "Fill in the four AWS settings."
 print("Notebook kernel:", sys.executable)
 helper = Path("examples/public_multimodal/prepare_inputs.py")
 assert helper.is_file(), "Open the notebook in the repository root."
+assert MODEL_PACKAGE_ARN and EXECUTION_ROLE_ARN and BUCKET, "Fill in the AWS settings."
+assert MODEL_PACKAGE_ARN.split(":")[3] == REGION, "Package and job region differ."
+session = boto3.Session(region_name=REGION)
+sm = session.client("sagemaker")
+s3 = session.client("s3")
+account = session.client("sts").get_caller_identity()["Account"]
+assert EXECUTION_ROLE_ARN.split(":")[4] == account, "Role must be in your account."
+location = s3.get_bucket_location(Bucket=BUCKET).get("LocationConstraint")
+bucket_region = {None: "us-east-1", "EU": "eu-west-1"}.get(location, location)
+assert bucket_region == REGION, "Bucket and job region differ."
+package = sm.describe_model_package(ModelPackageName=MODEL_PACKAGE_ARN)
+spec = package["InferenceSpecification"]
+assert INSTANCE_TYPE in spec.get("SupportedTransformInstanceTypes", []), spec
+assert "application/x-tar" in spec.get("SupportedContentTypes", []), spec
+assert "application/json" in spec.get("SupportedResponseMIMETypes", []), spec
+assert any(container.get("ProductId") for container in spec["Containers"]), (
+    "Use the subscribed Marketplace model package."
+)
+
+print("AWS account:", account, "Region:", REGION)
 run_id = "smb-public-" + time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:8]
 work = Path("public-data-demo") / run_id
 work.mkdir(parents=True, exist_ok=False)
@@ -218,16 +264,34 @@ You can read every conversion in
 [prepare_inputs.py](examples/public_multimodal/prepare_inputs.py).
 
 ```python
-subprocess.run([
-    sys.executable, str(helper),
-    "--output", str(work),
-    "--cache", "public-data-demo/cache",
-], check=True)
+if OWN_DATA_MANIFEST:
+    own_manifest = Path(OWN_DATA_MANIFEST).resolve()
+    subprocess.run([
+        sys.executable, "examples/own_data/prepare_batch.py",
+        "--manifest", str(own_manifest), "--output", str(work),
+    ], check=True)
+    source_manifest = work / "own-data-manifest.json"
+    patient_directories = {row["patient_id"]: (own_manifest.parent / row["directory"]).resolve()
+                           for row in json.loads(own_manifest.read_text())}
+else:
+    subprocess.run([
+        sys.executable, str(helper),
+        "--output", str(work), "--cache", "public-data-demo/cache",
+    ], check=True)
+    source_manifest = work / "cohort.json"
+    cohort = json.loads(source_manifest.read_text())
+    verification = json.loads((work / "verification.json").read_text())
+    patient_directories = {patient["patient_id"]: work / "patients" / patient["patient_id"]
+                           for patient in cohort["patients"]}
 index = json.loads((work / "request-index.json").read_text())
-cohort = json.loads((work / "cohort.json").read_text())
-verification = json.loads((work / "verification.json").read_text())
-PATIENT_IDS = [patient["patient_id"] for patient in cohort["patients"]]
-assert len(index) == 8
+PATIENT_IDS = list(patient_directories)
+assert index, "The batch must contain at least one request."
+if not OWN_DATA_MANIFEST:
+    assert len(index) == 8
+    assert {(item["patient_id"], item["ablation"]) for item in index} == {
+        (patient_id, ablation) for patient_id in PATIENT_IDS
+        for ablation in ("ehr", "ehr-wsi", "ehr-ct", "ehr-wsi-ct")
+    }
 ```
 
 Expect this message:
@@ -290,7 +354,7 @@ Inspect the actual tables:
 ```python
 for patient_id in PATIENT_IDS:
     print(patient_id)
-    for path in sorted((work / "patients" / patient_id / "ehr").glob("*.parquet")):
+    for path in sorted((patient_directories[patient_id] / "ehr").glob("*.parquet")):
         print(path.name)
         print(pl.read_parquet(path))
 ```
@@ -350,10 +414,10 @@ its metadata. This also prevents an omitted image from appearing as an event
 through a leftover metadata table.
 
 ```python
-expected = {(patient_id, ablation) for patient_id in PATIENT_IDS
-            for ablation in ("ehr", "ehr-wsi", "ehr-ct", "ehr-wsi-ct")}
-assert {(item["patient_id"], item["ablation"]) for item in index} == expected
-assert len({item["request"]["request_uuid"] for item in index}) == 8
+expected = {(item["patient_id"], item["ablation"], item["task_label"]) for item in index}
+assert len(expected) == len(index), "Duplicate patient/combination/task in the index."
+assert len({item["request"]["request_uuid"] for item in index}) == len(index)
+assert len({item["filename"] for item in index}) == len(index)
 for item in index:
     path = work / "requests" / item["filename"]
     with tarfile.open(path, "r:") as archive:
@@ -364,7 +428,7 @@ for item in index:
         with archive.extractfile("request.json") as stream:
             assert json.load(stream) == item["request"]
     print(item["patient_id"], item["ablation"], round(item["bytes"] / 1e6, 1), "MB")
-full = next(item for item in index if item["ablation"] == "ehr-wsi-ct")
+full = next((item for item in index if item["ablation"] == "ehr-wsi-ct"), index[0])
 print(json.dumps(full["request"], indent=2))
 ```
 
@@ -380,30 +444,11 @@ the same request. Generate a new UUID when its contents or task change.
 
 ## 6. Check AWS settings and upload the requests
 
-This cell checks your account, bucket region, and the package's supported
-instance types before creating compute. If an assertion fails, correct the
-setting named in the error before continuing.
+The configuration cell already checked your account, bucket region, and
+package before downloading data. This cell saves recovery settings before
+uploading the requests. If upload fails, run step 10 cleanup before retrying.
 
 ```python
-assert MODEL_PACKAGE_ARN and EXECUTION_ROLE_ARN and BUCKET, "Fill in the AWS settings."
-assert MODEL_PACKAGE_ARN.split(":")[3] == REGION, "Package and job region differ."
-session = boto3.Session(region_name=REGION)
-sm = session.client("sagemaker")
-s3 = session.client("s3")
-account = session.client("sts").get_caller_identity()["Account"]
-assert EXECUTION_ROLE_ARN.split(":")[4] == account, "Role must be in your account."
-location = s3.get_bucket_location(Bucket=BUCKET).get("LocationConstraint")
-bucket_region = {None: "us-east-1", "EU": "eu-west-1"}.get(location, location)
-assert bucket_region == REGION, "Bucket and job region differ."
-package = sm.describe_model_package(ModelPackageName=MODEL_PACKAGE_ARN)
-spec = package["InferenceSpecification"]
-assert INSTANCE_TYPE in spec.get("SupportedTransformInstanceTypes", []), spec
-assert "application/x-tar" in spec.get("SupportedContentTypes", []), spec
-assert "application/json" in spec.get("SupportedResponseMIMETypes", []), spec
-assert any(container.get("ProductId") for container in spec["Containers"]), (
-    "Use the subscribed Marketplace model package."
-)
-
 state = {
     "region": REGION,
     "account": account,
@@ -414,7 +459,7 @@ state = {
     "prefix": prefix,
     "model_name": run_id,
     "job_name": run_id,
-    "cohort_sha256": hashlib.sha256((work / "cohort.json").read_bytes()).hexdigest(),
+    "input_manifest_sha256": hashlib.sha256(source_manifest.read_bytes()).hexdigest(),
 }
 (work / "run.json").write_text(json.dumps(state, indent=2))
 (work / "package-description.json").write_text(json.dumps(package, indent=2, default=str))
@@ -427,7 +472,7 @@ for item in index:
         prefix + "input/" + item["filename"],
         ExtraArgs={"ContentType": "application/x-tar"},
     )
-print("Uploaded 8 requests to", "s3://" + BUCKET + "/" + prefix + "input/")
+print(f"Uploaded {len(index)} requests to", "s3://" + BUCKET + "/" + prefix + "input/")
 print("Saved recovery settings to", (work / "run.json").resolve())
 ```
 
@@ -503,7 +548,8 @@ while True:
     if status in {"Completed", "Failed", "Stopped"}:
         break
     if time.monotonic() >= deadline:
-        raise TimeoutError("Job may still be running. Inspect it or run step 10 cleanup.")
+        sm.stop_transform_job(TransformJobName=state["job_name"])
+        raise TimeoutError("Stop requested. Run step 10 cleanup to wait for termination and remove resources.")
     time.sleep(30)
 (work / "job-description.json").write_text(json.dumps(description, indent=2, default=str))
 assert status == "Completed", description.get("FailureReason", status)
@@ -563,16 +609,15 @@ for item in index:
         "task": item["task_label"], "request_uuid": value["request_uuid"],
         "prediction": value["prediction"], "score_type": value["score_type"],
     })
-assert len(summary) == 8
-assert {(row["patient_id"], row["ablation"]) for row in summary} == {
-    (patient_id, ablation) for patient_id in PATIENT_IDS
-    for ablation in ("ehr", "ehr-wsi", "ehr-ct", "ehr-wsi-ct")
+assert len(summary) == len(index)
+assert {(row["patient_id"], row["ablation"], row["task"]) for row in summary} == {
+    (item["patient_id"], item["ablation"], item["task_label"]) for item in index
 }
 with (work / "predictions.csv").open("w", newline="") as stream:
     writer = csv.DictWriter(stream, fieldnames=list(summary[0]))
     writer.writeheader()
     writer.writerows(summary)
-print("PASS: all 8 patient/combination responses are present and valid.")
+print(f"PASS: all {len(index)} patient/combination responses are present and valid.")
 print(pl.DataFrame(summary).pivot(on="ablation", index=["patient_id", "task"], values="prediction"))
 print(json.dumps(responses[index[0]["filename"]], indent=2))
 ```
@@ -592,7 +637,7 @@ their request UUIDs. Read an individual response as follows:
 
 ### Recorded AWS outputs
 
-The notebook ran these eight requests in AWS on November 19, 2026. The job completed on
+The notebook ran these eight requests in AWS on November 24, 2026. The job completed on
 one `ml.g5.2xlarge` in `us-east-1`, with network isolation enabled. All eight
 responses passed the checks above. The measured OS scores were:
 
@@ -609,7 +654,7 @@ clinical data, its slide, and CT was:
 ```json
 {
   "schema_version": "1.0",
-  "request_uuid": "7d04b3eb-a8b8-4e0f-817b-2ae5f8ba5ff5",
+  "request_uuid": "dbcacdee-a01e-4820-8ab5-c4c96aa8e064",
   "task_id": "time_to_death",
   "task_version": "1.0",
   "prediction": 260.38882875210766,
@@ -624,7 +669,7 @@ The [expected-results record](examples/public_multimodal/reference-run/run.json)
 identifies the model package and image used for these scores. Use the package
 from your subscription. Scores can differ when the model or inputs differ.
 
-The observed AWS job took 482.871 seconds, or about 8.0 minutes, including
+The observed AWS job took 499.099 seconds, or about 8.3 minutes, including
 provisioning and model startup. Allow for variation in startup and processing
 time. The [expected-results directory](examples/public_multimodal/reference-run/README.md)
 contains all eight responses and their request settings.
@@ -669,7 +714,7 @@ if same_setup:
         if not math.isclose(row["prediction"], expected_score, rel_tol=1e-6, abs_tol=1e-8):
             differences.append({"input": key, "expected": expected_score, "actual": row["prediction"]})
     assert not differences, differences
-    print("PASS: all 8 OS scores match the recorded AWS run within tolerance.")
+    print(f"PASS: all {len(index)} OS scores match the recorded AWS run within tolerance.")
 else:
     print("Numerical comparison skipped: this run uses a different image, patient input, or request setting.")
 ```
@@ -781,8 +826,9 @@ keys = []
 for item in index:
     keys.append({"Key": prefix + "input/" + item["filename"]})
     keys.append({"Key": prefix + "output/" + item["filename"] + ".out"})
-deleted = s3.delete_objects(Bucket=BUCKET, Delete={"Objects": keys})
-assert not deleted.get("Errors"), deleted.get("Errors")
+for offset in range(0, len(keys), 1000):
+    deleted = s3.delete_objects(Bucket=BUCKET, Delete={"Objects": keys[offset:offset + 1000]})
+    assert not deleted.get("Errors"), deleted.get("Errors")
 try:
     sm.describe_model(ModelName=state["model_name"])
 except ClientError as error:
@@ -808,8 +854,15 @@ no endpoint to delete.
 
 ## 11. Replace the public data with your own data
 
-The batch mechanism stays the same. Your main new work is producing each
-patient's clinical tables and correctly linking their images.
+Follow [Run a batch with your own patients](OWN_DATA.md) for executable clinical
+table creation, image metadata examples, and a manifest that selects any number
+of patients and modality combinations. Set `OWN_DATA_MANIFEST` in this notebook's
+configuration cell to use that manifest. The preparation cell switches to the
+own-data helper. The AWS and verification cells need no edits.
+
+The public example still requires all eight expected requests. Your own batch
+is checked against its request index instead. Its scores are not compared with
+the public patients' expected scores. Your main preparation steps are:
 
 1. Choose your prediction time. Establish which records and images were
    available then. For slides, distinguish tissue procurement from digitization
@@ -867,6 +920,7 @@ into memory.
 | AWS reports missing credentials | Log in to your local AWS profile, or check the role attached to the SageMaker notebook. |
 | `AccessDenied` or `iam:PassRole` | Check the caller's permissions separately from the execution role's permissions, including access to your S3 bucket and any KMS key. |
 | A subscription or package error | Confirm the subscription in the selected AWS account and copy the package ARN for the selected region and version. |
+| `CapacityError` | AWS could not provision the requested instance. Run step 10 cleanup, wait, then retry in a new run folder. Keep the download cache. Change instance type only if your subscribed package supports it. |
 | `ResourceLimitExceeded` | Check the regional `ml.g5.2xlarge` transform-job quota. Endpoint quotas are separate. |
 | A model or job name already exists | Inspect that job before submitting again. Use a new job name for a deliberate retry after a terminal failure. |
 | `invalid_archive` or `unsupported_content_type` | Use an uncompressed TAR with `request.json` at its root and `application/x-tar`. Do not upload the downloaded CT ZIP as the inference request. |
@@ -887,6 +941,10 @@ AWS can retain outputs for successful inputs even when other inputs cause the
 job to fail. Step 8 therefore requires both `Completed` and all eight outputs.
 [AWS failure behavior](https://docs.aws.amazon.com/sagemaker/latest/dg/batch-transform-errors.html)
 and [log locations](https://docs.aws.amazon.com/sagemaker/latest/dg/logging-cloudwatch.html).
+
+If these checks do not resolve the problem, use [Get help](SUPPORT.md). It links
+the public issue tracker and explains how to find private product support,
+which diagnostics to include, and when to contact your AWS administrator.
 
 ## Public data attribution
 

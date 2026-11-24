@@ -1,9 +1,9 @@
 patient_id,ablation,task,request_uuid,prediction,score_type
-C3L-00263,ehr,os,e838f9bc-1baa-4670-a9b4-89ed7d4d2376,291.0957615336904,rank_preserving_pseudo_days
-C3L-00263,ehr-wsi,os,097966b4-6443-464b-b37f-05ac0648153a,271.3775470162646,rank_preserving_pseudo_days
-C3L-00263,ehr-ct,os,080cb72d-5f78-4d72-b7ac-77c146d21103,296.2437977583667,rank_preserving_pseudo_days
-C3L-00263,ehr-wsi-ct,os,7d04b3eb-a8b8-4e0f-817b-2ae5f8ba5ff5,260.38882875210766,rank_preserving_pseudo_days
-C3L-00422,ehr,os,b090b5b0-6f58-4bd2-ad88-d58a1fdc6670,272.5300784823241,rank_preserving_pseudo_days
-C3L-00422,ehr-wsi,os,2e56df97-063a-4873-8f88-65f8ecee7340,277.6493574804294,rank_preserving_pseudo_days
-C3L-00422,ehr-ct,os,07ce70f7-1515-4240-a675-b8f4e40fe6e4,345.72121953456667,rank_preserving_pseudo_days
-C3L-00422,ehr-wsi-ct,os,6a1a3c88-8164-474b-9eeb-a96737393980,319.6709081115815,rank_preserving_pseudo_days
+C3L-00263,ehr,os,b36e679b-168e-451b-b27d-c20d2d6b637c,291.0957615336904,rank_preserving_pseudo_days
+C3L-00263,ehr-wsi,os,080483ff-278c-4527-90c3-7f95295df32f,271.3775470162646,rank_preserving_pseudo_days
+C3L-00263,ehr-ct,os,86d1f8bd-25a9-4477-8264-1662cd0d74f7,296.2437977583667,rank_preserving_pseudo_days
+C3L-00263,ehr-wsi-ct,os,dbcacdee-a01e-4820-8ab5-c4c96aa8e064,260.38882875210766,rank_preserving_pseudo_days
+C3L-00422,ehr,os,0f01fa0b-2713-4c55-8129-3e62741c1fae,272.5300784823241,rank_preserving_pseudo_days
+C3L-00422,ehr-wsi,os,fe04344e-8f8e-4efb-b94b-c9b8c8c79e8a,277.6493574804294,rank_preserving_pseudo_days
+C3L-00422,ehr-ct,os,e0f1f03f-6fb2-4571-9cd2-71b330d542bd,345.72121953456667,rank_preserving_pseudo_days
+C3L-00422,ehr-wsi-ct,os,7cfdb28e-2689-4c9f-ab86-e1334572c3e8,319.6709081115815,rank_preserving_pseudo_days

@@ -40,6 +40,6 @@ JSON. Their checksums are in `run.json`.
 - [C3L-00422, ehr-ct](responses/C3L-00422-ehr-ct-os.tar.out).
 - [C3L-00422, ehr-wsi-ct](responses/C3L-00422-ehr-wsi-ct-os.tar.out).
 
-The observed AWS job completed in 482.871 seconds on one `ml.g5.2xlarge` in
+The observed AWS job completed in 499.099 seconds on one `ml.g5.2xlarge` in
 `us-east-1`. All eight responses passed the notebook's identity and score
 checks. The temporary model and S3 objects were removed after completion.

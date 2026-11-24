@@ -333,6 +333,10 @@ The bundled synthetic TAR files use EHR only. Use the
 [public multimodal notebook](public_multimodal_walkthrough.ipynb) to download
 and prepare the matched slide and CT inputs.
 
+For an executable batch example with your own clinical tables and images, use
+[Run a batch with your own patients](OWN_DATA.md). It creates the TAR files and
+request index used by the public notebook.
+
 ## Package your own request
 
 Prepare a directory containing `request.json` and `input/`. The following
@@ -493,3 +497,8 @@ For a small endpoint example, use
 EHR data in memory and demonstrates both endpoint inference and Batch
 Transform. This alternative creates an endpoint as well as a batch job.
 Run its cleanup cell to remove both sets of resources when finished.
+
+## Get help
+
+See [Get help](SUPPORT.md) for the issue tracker, private product support, and
+the diagnostics to include. For account setup, use [AWS permissions](AWS_SETUP.md).
