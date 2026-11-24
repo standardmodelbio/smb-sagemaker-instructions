@@ -266,7 +266,7 @@ The bundled examples contain these entirely synthetic tables:
 
 | PTID | VITAL_STATUS | LAST_ALIVE_INTERVAL | DEATH_INTERVAL |
 |---|---|---|---|
-| synthetic-patient | Alive | 300 | null |
+| synthetic-patient | Alive | 10 | null |
 
 `labs.parquet`:
 
@@ -275,9 +275,10 @@ The bundled examples contain these entirely synthetic tables:
 | 10 | hemoglobin | x | 12.0 | g/dL |
 | 200 | future | y | 99.0 | g/dL |
 
-The day-200 lab is beyond the day-100 cutoff. For your own data, use the
-clinical table reference above and the imaging metadata below. Preserve the
-filenames and column names when mapping your source records.
+The recorded follow-up at day 10 is known before the day-100 cutoff. The
+day-200 lab is intentionally beyond the cutoff to demonstrate filtering. For
+your own data, use the clinical table reference above and the imaging metadata
+below. Preserve the filenames and column names when mapping your source records.
 
 ### Pathology whole-slide images
 
@@ -456,7 +457,7 @@ OS example:
 ```json
 {
   "schema_version": "1.0",
-  "request_uuid": "eb4baeba-23e6-46b5-8cdf-acb1eb02e0a3",
+  "request_uuid": "81cfa265-759b-42bd-93a3-686015545e4c",
   "task_id": "time_to_death",
   "task_version": "1.0",
   "prediction": 207.02597072139167,
