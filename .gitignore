@@ -4,3 +4,6 @@ __pycache__/
 *-result.json
 public-data-demo/
 .venv-public-demo/
+clinical.csv
+my-patients/
+my-batch.json
